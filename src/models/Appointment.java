@@ -1,19 +1,18 @@
 package models;
 
-public class Appointment {
-    // These fields are set once and do not change
+import services.Storable;
+
+public class Appointment implements Storable {
     private final String appointmentId;
-    private final String serviceType; // Normal (1h) or Major (3h)
+    private final String serviceType; 
     private final String scheduledDate;
     private final double totalAmount;
     private final String customerId;
     private final String technicianId;
     private final String staffId;
-    
-    // Status can change, so it is NOT marked as final
-    private String status; // Pending, Completed
+    private AppointmentStatus status; // Using Enum instead of String
 
-    public Appointment(String appointmentId, String serviceType, String status, 
+    public Appointment(String appointmentId, String serviceType, AppointmentStatus status, 
                        String scheduledDate, double totalAmount, String customerId, 
                        String technicianId, String staffId) {
         this.appointmentId = appointmentId;
@@ -26,18 +25,25 @@ public class Appointment {
         this.staffId = staffId;
     }
 
-    // Getters for all fields
+    // Getters
     public String getAppointmentId() { return appointmentId; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public AppointmentStatus getStatus() { return status; }
+    public void setStatus(AppointmentStatus status) { this.status = status; }
     public String getServiceType() { return serviceType; }
     public double getTotalAmount() { return totalAmount; }
     public String getCustomerId() { return customerId; }
-    public String getTechnicianId() { return technicianId; }
+
+    @Override
+    public String toFileFormat() {
+        // Standardized format for all text files [cite: 44]
+        return String.join("|", 
+            appointmentId, serviceType, status.name(), scheduledDate, 
+            String.valueOf(totalAmount), customerId, technicianId, staffId
+        );
+    }
 
     @Override
     public String toString() {
-        return appointmentId + "|" + serviceType + "|" + status + "|" + scheduledDate + 
-               "|" + totalAmount + "|" + customerId + "|" + technicianId + "|" + staffId;
+        return toFileFormat();
     }
 }
