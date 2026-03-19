@@ -1,12 +1,14 @@
 package views.components;
 
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import models.User;
 import views.MainFrame;
 
 public class Navbar extends JPanel {
     private final MainFrame parent;
+    private final ArrayList<NavButton> buttons = new ArrayList<>();
 
     public Navbar(MainFrame parent, User user) {
         this.parent = parent;
@@ -15,46 +17,57 @@ public class Navbar extends JPanel {
         setPreferredSize(new Dimension(900, 80));
         setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
 
-        // 1. Logo/Title Section (Left)
+        // Left: Logo/Title
         JLabel title = new JLabel("  APU Automotive Service Centre");
         title.setFont(new Font("Arial", Font.BOLD, 16));
         add(title, BorderLayout.WEST);
 
-        // 2. Navigation Items (Center)
-        JPanel navItems = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        // Center: Navigation Items
+        JPanel navItems = new JPanel(new FlowLayout(FlowLayout.CENTER, 25, 10));
         navItems.setOpaque(false);
         
-        // Role-based logic for Manager
         if (user.getRole().equals("Manager")) {
-            addManagerButtons(navItems);
+            setupManagerButtons(navItems);
         }
-        // Add other roles here later...
 
         add(navItems, BorderLayout.CENTER);
 
-        // 3. Logout Section (Right)
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 20));
-        rightPanel.setOpaque(false);
+        // Right: Logout
+        JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 20));
+        logoutPanel.setOpaque(false);
+        
         JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setIcon(new ImageIcon(new ImageIcon("src/assets/icons/logout-svgrepo-com.png")
+                .getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
         logoutBtn.addActionListener(e -> parent.showView("LOGIN"));
-        rightPanel.add(logoutBtn);
-        add(rightPanel, BorderLayout.EAST);
+        
+        logoutPanel.add(logoutBtn);
+        add(logoutPanel, BorderLayout.EAST);
     }
 
-    private void addManagerButtons(JPanel panel) {
-        NavButton btnProfile = new NavButton("My Profile", "user_icon.png");
-        NavButton btnStaff = new NavButton("Manage Staff", "staff_icon.png");
-        NavButton btnReports = new NavButton("Analyze Reports", "reports_icon.png");
-        NavButton btnService = new NavButton("Manage Service", "car_icon.png");
-        NavButton btnFeedback = new NavButton("Review Feedback", "feedback_icon.png");
+    private void setupManagerButtons(JPanel panel) {
+        // Define buttons with their default and active icons
+        addButton(panel, "My Profile", "profile.png", "profile_on_click.png", "PROFILE");
+        addButton(panel, "Manage Staff", "staff.png", "staff_on_click.png", "MANAGE_STAFF");
+        addButton(panel, "Manage Reports", "report.png", "report_on_click.png", "REPORTS");
+        addButton(panel, "Manage Service", "service.png", "service_on_click.png", "SERVICE");
+        addButton(panel, "Review Feedback", "feedback.png", "feedback_on_click.png", "FEEDBACK");
 
-        // Set 'My Profile' as active by default
-        btnProfile.setActive(true);
+        // Set 'My Profile' as the initial active button
+        if (!buttons.isEmpty()) buttons.get(0).setActive(true);
+    }
 
-        panel.add(btnProfile);
-        panel.add(btnStaff);
-        panel.add(btnReports);
-        panel.add(btnService);
-        panel.add(btnFeedback);
+    private void addButton(JPanel panel, String text, String icon, String activeIcon, String viewName) {
+        NavButton btn = new NavButton(text, icon, activeIcon);
+        btn.addActionListener(e -> {
+            // Reset all buttons and set current as active
+            for (NavButton b : buttons) b.setActive(false);
+            btn.setActive(true);
+            
+            // Switch the view in MainFrame
+            parent.showView(viewName);
+        });
+        buttons.add(btn);
+        panel.add(btn);
     }
 }
