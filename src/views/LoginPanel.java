@@ -79,10 +79,10 @@ public class LoginPanel extends JPanel {
         if (userData != null) {
             // Factory Logic: Instantiate the correct child class based on role 
             User user = switch (userData[3]) {
-                case "Manager" -> new Manager(userData[0], userData[2], userData[1], "");
-                case "Technician" -> new Technician(userData[0], userData[2], userData[1], "");
-                case "CounterStaff" -> new CounterStaff(userData[0], userData[2], userData[1], "");
-                default -> new Customer(userData[0], userData[2], userData[1], "");
+                case "Manager" -> new Manager(userData[0], userData[2], userData[1], "", "");
+                case "Technician" -> new Technician(userData[0], userData[2], userData[1], "", "");
+                case "CounterStaff" -> new CounterStaff(userData[0], userData[2], userData[1], "", "");
+                default -> new Customer(userData[0], userData[2], userData[1], "", "");
             };
 
             parent.setCurrentUser(user);

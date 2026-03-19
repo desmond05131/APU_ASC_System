@@ -2,8 +2,8 @@ package models;
 
 public class Manager extends User {
     
-    public Manager(String id, String name, String password, String email) {
-        super(id, name, password, "Manager", email);
+    public Manager(String id, String name, String password, String email, String contactNumber) {
+        super(id, name, password, "Manager", email, contactNumber);
     }
 
     @Override

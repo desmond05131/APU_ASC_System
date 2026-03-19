@@ -1,8 +1,8 @@
 package models;
 
 public class CounterStaff extends User {
-    public CounterStaff(String id, String name, String password, String email) {
-        super(id, name, password, "CounterStaff", email);
+    public CounterStaff(String id, String name, String password, String email, String contactNumber) {
+        super(id, name, password, "CounterStaff", email, contactNumber);
     }
 
     @Override

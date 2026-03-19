@@ -8,13 +8,15 @@ public abstract class User {
     private String password;
     private String role;
     private String email;
+    private String contactNumber;
 
-    public User(String id, String name, String password, String role, String email) {
+    public User(String id, String name, String password, String role, String email, String contactNumber) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.role = role;
         this.email = email;
+        this.contactNumber = contactNumber;
     }
 
     // Abstract method: Every child class must define its own login/landing logic
@@ -35,4 +37,7 @@ public abstract class User {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
 }

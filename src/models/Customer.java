@@ -1,8 +1,8 @@
 package models;
 
 public class Customer extends User {
-    public Customer(String id, String name, String password, String email) {
-        super(id, name, password, "Customer", email);
+    public Customer(String id, String name, String password, String email, String contactNumber) {
+        super(id, name, password, "Customer", email, contactNumber);
     }
 
     @Override
