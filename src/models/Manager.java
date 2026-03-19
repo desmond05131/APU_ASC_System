@@ -1,9 +1,5 @@
 package models;
 
-/**
- * Concrete class for Manager role. 
- * Illustrates Inheritance.
- */
 public class Manager extends User {
     public Manager(String userId, String password, String name) {
         super(userId, password, name, "Manager");
@@ -11,7 +7,12 @@ public class Manager extends User {
 
     @Override
     public void displayDashboard() {
-        // This will eventually call your ManagerDashboard GUI panel
-        System.out.println("Launching Manager Dashboard for: " + getName());
+        System.out.println("Opening Manager Dashboard for: " + getName());
+        // Logic for Table 1.0: CRUD staff, Set Prices, Review Feedback, Analyzed Reports
+    }
+
+    @Override
+    public String toString() {
+        return getUserId() + "|" + getPassword() + "|" + getName() + "|Manager";
     }
 }

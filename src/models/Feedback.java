@@ -1,11 +1,11 @@
 package models;
 
 public class Feedback {
-    private String feedbackId;
-    private String appointmentId;
-    private String userId; // The person who gave the feedback
-    private String comment;
-    private int rating; // 1-5
+    private final String feedbackId;
+    private final String appointmentId;
+    private final String userId; 
+    private final String comment;
+    private final int rating;
 
     public Feedback(String feedbackId, String appointmentId, String userId, String comment, int rating) {
         this.feedbackId = feedbackId;
@@ -15,7 +15,6 @@ public class Feedback {
         this.rating = rating;
     }
 
-    // Getters
     public String getComment() { return comment; }
     public int getRating() { return rating; }
 

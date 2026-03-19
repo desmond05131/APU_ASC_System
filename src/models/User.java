@@ -2,15 +2,11 @@ package models;
 
 import java.io.Serializable;
 
-/**
- * Abstract class representing a system user. 
- * Implements Encapsulation and Abstraction.
- */
 public abstract class User implements Serializable {
-    private String userId;
+    private final String userId; // 'final' because the ID shouldn't change
     private String password;
     private String name;
-    private String role;
+    private final String role; // 'final' because a user's role is fixed upon creation
 
     public User(String userId, String password, String name, String role) {
         this.userId = userId;
@@ -19,9 +15,8 @@ public abstract class User implements Serializable {
         this.role = role;
     }
 
-    // Encapsulation: Getter and Setter Methods
+    // Encapsulation: Getters and Setters
     public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
@@ -30,14 +25,7 @@ public abstract class User implements Serializable {
     public void setName(String name) { this.name = name; }
 
     public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
 
-    // Abstract method: Each role will display its unique dashboard UI
+    // Abstract method to be overridden by each specific role (Polymorphism)
     public abstract void displayDashboard();
-    
-    @Override
-    public String toString() {
-        // Uses pipe delimiter for easy text file parsing
-        return userId + "|" + password + "|" + name + "|" + role;
-    }
 }

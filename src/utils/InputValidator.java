@@ -5,13 +5,14 @@ public class InputValidator {
         return input != null && !input.trim().isEmpty();
     }
 
+    /**
+     * Checks if a string is numeric. 
+     * Uses regex to avoid "Unnecessary temporary" warnings from unused parse results.
+     */
     public static boolean isNumeric(String input) {
-        try {
-            Double.parseDouble(input);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        if (input == null) return false;
+        // Matches integers or decimals (optional leading sign)
+        return input.matches("-?\\d+(\\.\\d+)?");
     }
 
     public static boolean isValidRating(int rating) {

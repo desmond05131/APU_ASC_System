@@ -1,14 +1,17 @@
 package models;
 
 public class Appointment {
-    private String appointmentId;
-    private String serviceType; // Normal (1h) or Major (3h)
-    private String status;      // Pending, Completed
-    private String scheduledDate;
-    private double totalAmount;
-    private String customerId;
-    private String technicianId;
-    private String staffId;
+    // These fields are set once and do not change
+    private final String appointmentId;
+    private final String serviceType; // Normal (1h) or Major (3h)
+    private final String scheduledDate;
+    private final double totalAmount;
+    private final String customerId;
+    private final String technicianId;
+    private final String staffId;
+    
+    // Status can change, so it is NOT marked as final
+    private String status; // Pending, Completed
 
     public Appointment(String appointmentId, String serviceType, String status, 
                        String scheduledDate, double totalAmount, String customerId, 
@@ -23,7 +26,7 @@ public class Appointment {
         this.staffId = staffId;
     }
 
-    // Getters and Setters for all fields
+    // Getters for all fields
     public String getAppointmentId() { return appointmentId; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
