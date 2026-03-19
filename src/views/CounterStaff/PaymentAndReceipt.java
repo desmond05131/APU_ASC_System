@@ -1,5 +1,5 @@
 package views.CounterStaff;
 
-public class Payment&Receipt {
+public class PaymentAndReceipt {
     
 }
