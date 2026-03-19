@@ -1,31 +1,38 @@
 package models;
 
-import java.io.Serializable;
-
-public abstract class User implements Serializable {
-    private final String userId; // 'final' because the ID shouldn't change
-    private String password;
+// Abstraction: Class is abstract to prevent direct instantiation
+public abstract class User {
+    // Encapsulation: Private fields to protect data integrity
+    private String id;
     private String name;
-    private final String role; // 'final' because a user's role is fixed upon creation
+    private String password;
+    private String role;
+    private String email;
 
-    public User(String userId, String password, String name, String role) {
-        this.userId = userId;
-        this.password = password;
+    public User(String id, String name, String password, String role, String email) {
+        this.id = id;
         this.name = name;
+        this.password = password;
         this.role = role;
+        this.email = email;
     }
 
-    // Encapsulation: Getters and Setters
-    public String getUserId() { return userId; }
+    // Abstract method: Every child class must define its own login/landing logic
+    public abstract String getDashboardAccess();
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    // Getters and Setters (Encapsulation)
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
-    public String getRole() { return role; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    // Abstract method to be overridden by each specific role (Polymorphism)
-    public abstract void displayDashboard();
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }

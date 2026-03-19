@@ -1,18 +1,14 @@
 package models;
 
 public class Manager extends User {
-    public Manager(String userId, String password, String name) {
-        super(userId, password, name, "Manager");
+    
+    public Manager(String id, String name, String password, String email) {
+        super(id, name, password, "Manager", email);
     }
 
     @Override
-    public void displayDashboard() {
-        System.out.println("Opening Manager Dashboard for: " + getName());
-        // Logic for Table 1.0: CRUD staff, Set Prices, Review Feedback, Analyzed Reports
-    }
-
-    @Override
-    public String toString() {
-        return getUserId() + "|" + getPassword() + "|" + getName() + "|Manager";
+    public String getDashboardAccess() {
+        // Specific logic for Manager functionalities like "Analyzed reports"
+        return "Manager Dashboard: Accessing reports and staff management.";
     }
 }

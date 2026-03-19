@@ -1,18 +1,17 @@
 package models;
 
 public class Customer extends User {
-    public Customer(String userId, String password, String name) {
-        super(userId, password, name, "Customer");
+    public Customer(String id, String name, String password, String email) {
+        super(id, name, password, "Customer", email);
     }
 
     @Override
-    public void displayDashboard() {
-        System.out.println("Opening Customer Dashboard for: " + getName());
-        // Logic for Table 1.0: Access Histories, View Feedbacks, Provide Comments
+    public String getDashboardAccess() {
+        return "Customer Dashboard: Accessing service histories, feedbacks, and comments.";
     }
 
     @Override
     public String toString() {
-        return getUserId() + "|" + getPassword() + "|" + getName() + "|Customer";
+        return getId() + "|" + getPassword() + "|" + getName() + "|Customer";
     }
 }

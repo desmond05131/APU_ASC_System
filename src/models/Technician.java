@@ -1,18 +1,17 @@
 package models;
 
 public class Technician extends User {
-    public Technician(String userId, String password, String name) {
-        super(userId, password, name, "Technician");
+    public Technician(String id, String name, String password, String email) {
+        super(id, name, password, "Technician", email);
     }
-
+        
     @Override
-    public void displayDashboard() {
-        System.out.println("Opening Technician Dashboard for: " + getName());
-        // Logic for Table 1.0: Check Assigned Jobs, Update Status, Provide Feedback
+    public String getDashboardAccess() {
+        return "Technician Dashboard: Checking assigned jobs, updating status, and providing feedback.";
     }
 
     @Override
     public String toString() {
-        return getUserId() + "|" + getPassword() + "|" + getName() + "|Technician";
+        return getId() + "|" + getPassword() + "|" + getName() + "|Technician";
     }
 }

@@ -1,18 +1,17 @@
 package models;
 
 public class CounterStaff extends User {
-    public CounterStaff(String userId, String password, String name) {
-        super(userId, password, name, "CounterStaff");
+    public CounterStaff(String id, String name, String password, String email) {
+        super(id, name, password, "CounterStaff", email);
     }
 
     @Override
-    public void displayDashboard() {
-        System.out.println("Opening Staff Dashboard for: " + getName());
-        // Logic for Table 1.0: CRUD customers, Manage Appointments, Collect Payment
+    public String getDashboardAccess() {
+        return "CounterStaff Dashboard: Managing customers, appointments, and payments.";
     }
 
     @Override
     public String toString() {
-        return getUserId() + "|" + getPassword() + "|" + getName() + "|CounterStaff";
+        return getId() + "|" + getPassword() + "|" + getName() + "|CounterStaff";
     }
 }
