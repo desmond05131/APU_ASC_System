@@ -1,21 +1,26 @@
 package utils;
 
+import java.util.regex.Pattern;
+
 public class InputValidator {
+    // Regex patterns for validation
+    private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
+    private static final String PHONE_PATTERN = "^[0-9]{3}-[0-9]{3,4} [0-9]{4}$"; // Matches 012-345 6789
+
     public static boolean isNotEmpty(String input) {
         return input != null && !input.trim().isEmpty();
     }
 
-    /**
-     * Checks if a string is numeric. 
-     * Uses regex to avoid "Unnecessary temporary" warnings from unused parse results.
-     */
-    public static boolean isNumeric(String input) {
-        if (input == null) return false;
-        // Matches integers or decimals (optional leading sign)
-        return input.matches("-?\\d+(\\.\\d+)?");
+    public static boolean isValidEmail(String email) {
+        return Pattern.compile(EMAIL_PATTERN).matcher(email).matches();
     }
 
-    public static boolean isValidRating(int rating) {
-        return rating >= 1 && rating <= 5;
+    public static boolean isValidPhone(String phone) {
+        return Pattern.compile(PHONE_PATTERN).matcher(phone).matches();
+    }
+
+    public static boolean isNumeric(String input) {
+        if (input == null) return false;
+        return input.matches("-?\\d+(\\.\\d+)?");
     }
 }
