@@ -3,6 +3,9 @@ package views;
 import java.awt.*;
 import javax.swing.*;
 import models.User;
+import views.Manager.ManagerDashboard;
+// Import other dashboards as you create them
+// import views.Technician.TechnicianDashboard;
 
 public class MainFrame extends JFrame {
     private final CardLayout cardLayout;
@@ -11,22 +14,25 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         setTitle("APU Automotive Service Centre");
-        setSize(900, 700);
+        setSize(1000, 750); // Increased size for better dashboard visibility
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        // Initialize and add the Login Panel
-        LoginPanel loginPanel = new LoginPanel(this);
-        mainPanel.add(loginPanel, "LOGIN");
+        // 1. Register Login Panel
+        mainPanel.add(new LoginPanel(this), "LOGIN");
+
+        // 2. Register Dashboards (Add others here as stubs are filled)
+        // These keys MUST match the roles returned by your AuthController
+        mainPanel.add(new ManagerDashboard(this), "MANAGER");
+        // mainPanel.add(new TechnicianDashboard(this), "TECHNICIAN");
 
         add(mainPanel);
         cardLayout.show(mainPanel, "LOGIN");
     }
 
-    // Centralized method to switch views safely
     public void showView(String viewName) {
         cardLayout.show(mainPanel, viewName);
     }
@@ -40,7 +46,6 @@ public class MainFrame extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Ensure UI is created on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> new MainFrame().setVisible(true));
     }
 }
