@@ -12,6 +12,7 @@ public class ManagerDashboard extends JPanel {
     private final JPanel contentArea;
     private final ManageStaffPanel staffPanel;
     private final ManageServicePanel servicePanel;
+    private final AnalyzeReportPanel reportPanel; // Added the report panel reference
 
     public ManagerDashboard(MainFrame parent) {
         setLayout(new BorderLayout());
@@ -23,11 +24,16 @@ public class ManagerDashboard extends JPanel {
         // 2. Initialize sub-panels
         // We pass 'parent' so ManageProfilePanel can get the current user
         contentArea.add(new ManageProfilePanel(parent), "PROFILE");
+        
         staffPanel = new ManageStaffPanel(this);
         contentArea.add(staffPanel, "MANAGE_STAFF");
+        
         servicePanel = new ManageServicePanel(this);
         contentArea.add(servicePanel, "MANAGE_SERVICES");
-        contentArea.add(new JPanel(), "REPORTS");      // Placeholder
+        
+        // Replaced the placeholder with the actual AnalyzeReportPanel
+        reportPanel = new AnalyzeReportPanel(); 
+        contentArea.add(reportPanel, "REPORTS");
 
         // 3. Add Navbar and pass this dashboard instance to it
         Navbar nav = new Navbar(parent, this);
