@@ -1,40 +1,67 @@
 package controllers;
 
 import java.util.*;
-import models.Appointment;
 import services.FileHandler;
 
 public class ReportController {
-    private final String PAYMENT_FILE = "payments.txt";
+    private final String PAYMENT_FILE = "src/database/payments.txt";
+    private final String APPOINTMENT_FILE = "src/database/appointments.txt";
 
-    public double calculateTotalRevenue(String startDate, String endDate) {
-        ArrayList<String> lines = FileHandler.readData(PAYMENT_FILE);
-        double total = 0;
-        for (String line : lines) {
-            String[] d = line.split("\\|");
-            if (d.length >= 5) {
-                String paymentDate = d[4]; // Date is index 4
-                if (isWithinRange(paymentDate, startDate, endDate)) {
-                    total += Double.parseDouble(d[3]);
-                }
+    // Returns summary metrics: [Total Revenue, Total Apps, Completed, Cancelled]
+    public Map<String, Double> getSummaryStats(String start, String end) {
+        ArrayList<String> paymentData = FileHandler.readData(PAYMENT_FILE);
+        ArrayList<String> appData = FileHandler.readData(APPOINTMENT_FILE);
+        
+        double revenue = 0;
+        int totalApps = 0, completed = 0, cancelled = 0;
+
+        // Process Revenue
+        for (String line : paymentData) {
+            String[] p = line.split("\\|");
+            if (p.length >= 5 && isWithinRange(p[4], start, end)) {
+                revenue += Double.parseDouble(p[3]);
             }
         }
-        return total;
+
+        // Process Appointment Statuses
+        for (String line : appData) {
+            String[] p = line.split("\\|");
+            if (p.length >= 7 && isWithinRange(p[4], start, end)) {
+                totalApps++;
+                String status = p[6].toUpperCase();
+                if (status.equals("COMPLETED")) completed++;
+                else if (status.equals("CANCELLED")) cancelled++;
+            }
+        }
+
+        Map<String, Double> stats = new HashMap<>();
+        stats.put("Revenue", revenue);
+        stats.put("Total", (double)totalApps);
+        stats.put("Completed", (double)completed);
+        stats.put("Cancelled", (double)cancelled);
+        return stats;
     }
 
-    public Map<String, Integer> getServiceFrequency(String startDate, String endDate) {
-        ArrayList<Appointment> apps = AppointmentController.getAllAppointments(); //
-        Map<String, Integer> freq = new HashMap<>();
-        for (Appointment a : apps) {
-            if (isWithinRange(a.getScheduledDate(), startDate, endDate)) {
-                freq.put(a.getServiceType(), freq.getOrDefault(a.getServiceType(), 0) + 1);
+    // Monthly data for the Bar Chart: Map<"Jan", 1500.0>
+    public Map<String, Double> getMonthlyRevenue() {
+        ArrayList<String> data = FileHandler.readData(PAYMENT_FILE);
+        Map<String, Double> monthly = new LinkedHashMap<>();
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        for (String m : months) monthly.put(m, 0.0);
+
+        for (String line : data) {
+            String[] p = line.split("\\|");
+            if (p.length >= 5) {
+                int monthIdx = Integer.parseInt(p[4], 5, 7, 10) - 1;
+                String monthName = months[monthIdx];
+                monthly.put(monthName, monthly.get(monthName) + Double.parseDouble(p[3]));
             }
         }
-        return freq;
+        return monthly;
     }
 
     private boolean isWithinRange(String date, String start, String end) {
-        if (start.isEmpty() || end.isEmpty()) return true; // Show all if no filter
+        if (start.isEmpty() || end.isEmpty()) return true;
         return date.compareTo(start) >= 0 && date.compareTo(end) <= 0;
     }
 }
