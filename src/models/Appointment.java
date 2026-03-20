@@ -30,6 +30,7 @@ public class Appointment implements Storable {
     public AppointmentStatus getStatus() { return status; }
     public void setStatus(AppointmentStatus status) { this.status = status; }
     public String getServiceType() { return serviceType; }
+    public String getScheduledDate() { return scheduledDate; }
     public double getTotalAmount() { return totalAmount; }
     public String getCustomerId() { return customerId; }
 
