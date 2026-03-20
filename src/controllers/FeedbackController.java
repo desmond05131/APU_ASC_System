@@ -10,39 +10,31 @@ public class FeedbackController {
     private final String FILE_PATH = "src/database/feedback.txt";
 
     public FeedbackController() {
-        loadFeedback();
+        load();
     }
 
-    private void loadFeedback() {
+    private void load() {
         ArrayList<String> data = FileHandler.readData(FILE_PATH);
         feedbackList.clear();
         for (String line : data) {
             String[] p = line.split("\\|");
-            if (p.length == 6) {
-                feedbackList.add(new Feedback(p[0], p[1], p[2], Integer.parseInt(p[3]), p[4], p[5]));
+            if (p.length == 5) {
+                // Correctly mapping indices: ID, Rating, Name, Comment, Date
+                feedbackList.add(new Feedback(p[0], Integer.parseInt(p[1]), p[2], p[3], p[4]));
             }
         }
     }
 
     public ArrayList<Feedback> getAllFeedback() {
-        loadFeedback(); // Ensure we have latest
+        load(); // Refresh from file
         return feedbackList;
     }
 
-    public ArrayList<Feedback> filterByRating(int rating) {
+    public ArrayList<Feedback> search(String id, String ratingFilter) {
+        load(); // Refresh before filtering
         return feedbackList.stream()
-            .filter(f -> f.getRating() == rating)
+            .filter(f -> (id.isEmpty() || f.getFeedbackId().toLowerCase().contains(id.toLowerCase())))
+            .filter(f -> (ratingFilter.equals("All") || (f.getRating() + " Star").equals(ratingFilter)))
             .collect(Collectors.toCollection(ArrayList::new));
-    }
-
-    public void deleteFeedback(String id) {
-        feedbackList.removeIf(f -> f.getFeedbackId().equals(id));
-        saveFeedback();
-    }
-
-    private void saveFeedback() {
-        ArrayList<String> data = new ArrayList<>();
-        for (Feedback f : feedbackList) data.add(f.toString());
-        FileHandler.writeData(FILE_PATH, data);
     }
 }
