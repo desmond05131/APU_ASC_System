@@ -1,6 +1,8 @@
 package views;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.*;
 import models.User;
 import views.Manager.ManagerDashboard;
@@ -11,6 +13,7 @@ public class MainFrame extends JFrame {
     private final CardLayout cardLayout;
     private final JPanel mainPanel;
     private User currentUser;
+    private final Map<String, JPanel> dashboards = new HashMap<>();
 
     public MainFrame() {
         setTitle("APU Automotive Service Centre");
@@ -24,17 +27,31 @@ public class MainFrame extends JFrame {
         // 1. Register Login Panel
         mainPanel.add(new LoginPanel(this), "LOGIN");
 
-        // 2. Register Dashboards (Add others here as stubs are filled)
-        // These keys MUST match the roles returned by your AuthController
-        mainPanel.add(new ManagerDashboard(this), "MANAGER");
-        // mainPanel.add(new TechnicianDashboard(this), "TECHNICIAN");
+        // 2. Dashboards will be created lazily when first accessed
+        // This avoids NullPointerException when dashboards try to access currentUser before login
 
         add(mainPanel);
         cardLayout.show(mainPanel, "LOGIN");
     }
 
     public void showView(String viewName) {
+        // Lazily initialize dashboard if not already created
+        if (!dashboards.containsKey(viewName)) {
+            JPanel dashboard = createDashboard(viewName);
+            if (dashboard != null) {
+                dashboards.put(viewName, dashboard);
+                mainPanel.add(dashboard, viewName);
+            }
+        }
         cardLayout.show(mainPanel, viewName);
+    }
+
+    private JPanel createDashboard(String role) {
+        return switch (role) {
+            case "MANAGER" -> new ManagerDashboard(this);
+            // case "TECHNICIAN" -> new TechnicianDashboard(this);
+            default -> null;
+        };
     }
 
     public void setCurrentUser(User user) {
