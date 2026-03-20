@@ -83,6 +83,28 @@ public class ManageStaffPanel extends JPanel {
             int row = staffTable.getSelectedRow();
             if (row != -1) {
                 String id = tableModel.getValueAt(row, 0).toString();
+                String name = tableModel.getValueAt(row, 1).toString();
+                
+                // Enhancement: Add Confirmation Dialog
+                int confirm = JOptionPane.showConfirmDialog(this, 
+                    "Are you sure you want to delete " + name + " (" + id + ")?", 
+                    "Confirm Deletion", JOptionPane.YES_NO_OPTION);
+                    
+                if (confirm == JOptionPane.YES_OPTION) {
+                    if (controller.deleteStaff(id)) {
+                        JOptionPane.showMessageDialog(this, "Staff deleted successfully.");
+                        refreshTable();
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a staff member to delete.");
+            }
+        });
+
+        btnDelete.addActionListener(e -> {
+            int row = staffTable.getSelectedRow();
+            if (row != -1) {
+                String id = tableModel.getValueAt(row, 0).toString();
                 if (controller.deleteStaff(id)) refreshTable();
             }
         });

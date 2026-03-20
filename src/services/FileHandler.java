@@ -28,6 +28,17 @@ public class FileHandler {
         }
     }
 
+    public static void writeData(String fileName, ArrayList<String> records) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(DATA_DIR + fileName))) {
+            for (String record : records) {
+                writer.write(record);
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+
     public static void updateLine(String fileName, String id, String newRecord) {
         ArrayList<String> data = readData(fileName);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(DATA_DIR + fileName))) {
