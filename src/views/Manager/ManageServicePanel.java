@@ -8,15 +8,15 @@ import javax.swing.table.DefaultTableModel;
 import models.Service;
 
 public class ManageServicePanel extends JPanel {
-    private ServiceController controller;
-    private JTable table;
+    private final ServiceController controller;
+    private final JTable table;
     private final DefaultTableModel tableModel;
-    private JTextField txtName, txtPrice, txtSearch;
-    private JComboBox<String> cbCategory;
+    private final JTextField txtName, txtPrice, txtSearch;
+    private final JComboBox<String> cbCategory;
     private String selectedId = null;
 
-    public ManageServicePanel() {
-        controller = new ServiceController();
+    public ManageServicePanel(ManagerDashboard parent) {
+        this.controller = new ServiceController();
         setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 

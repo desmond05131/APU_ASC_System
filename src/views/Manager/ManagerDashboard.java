@@ -11,6 +11,7 @@ public class ManagerDashboard extends JPanel {
     private final CardLayout cardLayout;
     private final JPanel contentArea;
     private final ManageStaffPanel staffPanel;
+    private final ManageServicePanel servicePanel;
 
     public ManagerDashboard(MainFrame parent) {
         setLayout(new BorderLayout());
@@ -24,6 +25,8 @@ public class ManagerDashboard extends JPanel {
         contentArea.add(new ManageProfilePanel(parent), "PROFILE");
         staffPanel = new ManageStaffPanel(this);
         contentArea.add(staffPanel, "MANAGE_STAFF");
+        servicePanel = new ManageServicePanel(this);
+        contentArea.add(servicePanel, "MANAGE_SERVICES");
         contentArea.add(new JPanel(), "REPORTS");      // Placeholder
 
         // 3. Add Navbar and pass this dashboard instance to it
@@ -46,5 +49,14 @@ public class ManagerDashboard extends JPanel {
 
     public void refreshStaffList() {
         staffPanel.refreshTable();
+    }
+
+    public void showServiceManagement() {
+        cardLayout.show(contentArea, "MANAGE_SERVICES");
+    }
+
+    public void showServiceDetail(models.Service service) {
+        contentArea.add(new ServiceDetailPanel(this, service), "SERVICE_DETAIL");
+        cardLayout.show(contentArea, "SERVICE_DETAIL");
     }
 }
