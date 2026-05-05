@@ -12,6 +12,7 @@ public class Technician extends User {
 
     @Override
     public String toString() {
-        return getId() + "|" + getPassword() + "|" + getName() + "|Technician";
+        return getId() + "|" + getPassword() + "|" + getName() + "|Technician|"
+                + getEmail() + "|" + getContactNumber();
     }
 }

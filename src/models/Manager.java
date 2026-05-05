@@ -8,7 +8,12 @@ public class Manager extends User {
 
     @Override
     public String getDashboardAccess() {
-        // Specific logic for Manager functionalities like "Analyzed reports"
         return "Manager Dashboard: Accessing reports and staff management.";
+    }
+
+    @Override
+    public String toString() {
+        return getId() + "|" + getPassword() + "|" + getName() + "|Manager|"
+                + getEmail() + "|" + getContactNumber();
     }
 }

@@ -12,6 +12,7 @@ public class CounterStaff extends User {
 
     @Override
     public String toString() {
-        return getId() + "|" + getPassword() + "|" + getName() + "|CounterStaff";
+        return getId() + "|" + getPassword() + "|" + getName() + "|CounterStaff|"
+                + getEmail() + "|" + getContactNumber();
     }
 }

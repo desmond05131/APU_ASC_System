@@ -7,103 +7,165 @@ import models.User;
 import utils.InputValidator;
 
 public class UserDetailPanel extends JPanel {
-    private final JTextField txtId, txtName, txtEmail, txtPhone;
-    private final JPasswordField txtPass, txtNewPass, txtConfirmPass;
-    private final JComboBox<String> roleCombo;
-    private final User existingUser;
+    private JTextField      txtId, txtName, txtEmail, txtPhone;
+    private JPasswordField  txtPass, txtConfirmPass;
+    private JComboBox<String> roleCombo;
+    private final User             existingUser;
     private final ManagerDashboard dashboard;
-    private final StaffController controller;
+    private final StaffController  controller;
 
     public UserDetailPanel(ManagerDashboard dashboard, User user) {
-        this.dashboard = dashboard;
+        this.dashboard    = dashboard;
         this.existingUser = user;
-        this.controller = new StaffController();
-        
+        this.controller   = new StaffController();
+
         setLayout(new BorderLayout());
-        setBackground(new Color(230, 240, 250)); // Light blue header area
+        setBackground(Color.WHITE);
 
-        // Header
-        JLabel header = new JLabel("  APU Automotive Service Centre", JLabel.LEFT);
-        header.setFont(new Font("Arial", Font.BOLD, 18));
-        header.setPreferredSize(new Dimension(0, 60));
-        add(header, BorderLayout.NORTH);
+        add(buildForm(),   BorderLayout.CENTER);
+        add(buildFooter(), BorderLayout.SOUTH);
+    }
 
-        // Main Form Area
-        JPanel mainForm = new JPanel(new GridBagLayout());
-        mainForm.setBackground(Color.WHITE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 30, 15, 30);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+    // ------------------------------------------------------------------ Form
+    private JPanel buildForm() {
+        JPanel form = new JPanel(new GridBagLayout());
+        form.setBackground(Color.WHITE);
+        form.setBorder(BorderFactory.createEmptyBorder(40, 60, 20, 60));
 
-        // Left Column Labels
-        String[] labels = {"User ID :", "Full Name :", "Email Address :", "Contact Number :", 
-                           "Current Password :", "New Password :", "Confirm Password :"};
-        
-        // Initialize Fields
-        txtId = new JTextField(user == null ? "AUTO" : user.getId(), 20);
+        GridBagConstraints g = new GridBagConstraints();
+        g.insets = new Insets(14, 12, 14, 12);
+        g.fill   = GridBagConstraints.HORIZONTAL;
+
+        boolean isAdd = (existingUser == null);
+
+        // ---- Left column ----
+        txtId = new JTextField(isAdd ? "AUTO" : existingUser.getId(), 22);
         txtId.setEditable(false);
-        txtName = new JTextField(user == null ? "" : user.getName(), 20);
-        txtEmail = new JTextField(user == null ? "" : user.getEmail(), 20);
-        txtPhone = new JTextField(user == null ? "" : user.getContactNumber(), 20);
-        txtPass = new JPasswordField(20);
-        txtNewPass = new JPasswordField(20);
-        txtConfirmPass = new JPasswordField(20);
+        txtId.setBackground(new Color(238, 240, 244));
+        txtId.setForeground(new Color(140, 145, 160));
+        txtId.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        txtId.setBorder(BorderFactory.createLineBorder(new Color(210, 215, 222)));
 
-        JTextField[] fields = {txtId, txtName, txtEmail, txtPhone, txtPass, txtNewPass, txtConfirmPass};
+        txtName        = editField(isAdd ? "" : existingUser.getName());
+        txtEmail       = editField(isAdd ? "" : existingUser.getEmail());
+        txtPhone       = editField(isAdd ? "" : existingUser.getContactNumber());
+        txtPass        = passField();
+        txtConfirmPass = passField();
 
-        for (int i = 0; i < labels.length; i++) {
-            gbc.gridx = 0; gbc.gridy = i;
-            mainForm.add(new JLabel(labels[i]), gbc);
-            gbc.gridx = 1;
-            mainForm.add(fields[i], gbc);
+        addLeftRow(form, g, "User ID :",         txtId,          0);
+        addLeftRow(form, g, "Full Name :",        txtName,        1);
+        addLeftRow(form, g, "Email Address:",     txtEmail,       2);
+        addLeftRow(form, g, "Contact Number :",   txtPhone,       3);
+        addLeftRow(form, g, "Password:",          txtPass,        4);
+        addLeftRow(form, g, "Confirm Password:",  txtConfirmPass, 5);
+
+        // ---- Right column — Role ----
+        g.gridx = 2; g.gridy = 0; g.weightx = 0;
+        g.fill = GridBagConstraints.NONE; g.anchor = GridBagConstraints.EAST;
+        JLabel roleLabel = new JLabel("Role:");
+        roleLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        form.add(roleLabel, g);
+
+        g.gridx = 3; g.weightx = 0.4;
+        g.fill = GridBagConstraints.HORIZONTAL; g.anchor = GridBagConstraints.WEST;
+        roleCombo = new JComboBox<>(new String[]{"Manager", "Counter Staff", "Technician"});
+        roleCombo.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        if (existingUser != null) {
+            String displayRole = "CounterStaff".equals(existingUser.getRole())
+                    ? "Counter Staff" : existingUser.getRole();
+            roleCombo.setSelectedItem(displayRole);
         }
+        form.add(roleCombo, g);
 
-        // Right Column: Role Selection (Matches your wireframe)
-        gbc.gridx = 2; gbc.gridy = 0;
-        mainForm.add(new JLabel("Role: "), gbc);
-        gbc.gridx = 3;
-        roleCombo = new JComboBox<>(new String[]{"Manager", "CounterStaff", "Technician"});
-        if (user != null) roleCombo.setSelectedItem(user.getRole());
-        mainForm.add(roleCombo, gbc);
+        return form;
+    }
 
-        // Buttons (Matching wireframe colors)
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 20));
+    private void addLeftRow(JPanel panel, GridBagConstraints g,
+                            String labelText, JComponent field, int row) {
+        g.gridx = 0; g.gridy = row; g.weightx = 0;
+        g.fill = GridBagConstraints.NONE; g.anchor = GridBagConstraints.EAST;
+        JLabel lbl = new JLabel(labelText);
+        lbl.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        panel.add(lbl, g);
+
+        g.gridx = 1; g.weightx = 0.5;
+        g.fill = GridBagConstraints.HORIZONTAL; g.anchor = GridBagConstraints.WEST;
+        panel.add(field, g);
+    }
+
+    private JTextField editField(String text) {
+        JTextField f = new JTextField(text, 22);
+        f.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        return f;
+    }
+
+    private JPasswordField passField() {
+        JPasswordField f = new JPasswordField(22);
+        f.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        return f;
+    }
+
+    // ------------------------------------------------------------------ Footer
+    private JPanel buildFooter() {
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 18));
         footer.setBackground(Color.WHITE);
-        
-        JButton btnSave = new JButton("Save");
-        btnSave.setBackground(new Color(102, 102, 255));
-        btnSave.setForeground(Color.WHITE);
-        btnSave.addActionListener(e -> handleSave());
 
-        JButton btnCancel = new JButton("Cancel");
-        btnCancel.setBackground(new Color(102, 102, 255));
-        btnCancel.setForeground(Color.WHITE);
+        JButton btnSave   = styledButton("Save",   new Color(100, 100, 248));
+        JButton btnCancel = styledButton("Cancel", new Color(100, 100, 248));
+
+        btnSave.addActionListener(e -> handleSave());
         btnCancel.addActionListener(e -> dashboard.switchContent("MANAGE_STAFF"));
 
         footer.add(btnSave);
         footer.add(btnCancel);
-
-        add(mainForm, BorderLayout.CENTER);
-        add(footer, BorderLayout.SOUTH);
+        return footer;
     }
 
+    private JButton styledButton(String text, Color bg) {
+        JButton btn = new JButton(text);
+        btn.setBackground(bg);
+        btn.setForeground(Color.WHITE);
+        btn.setFocusPainted(false);
+        btn.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        btn.setBorder(BorderFactory.createEmptyBorder(10, 28, 10, 28));
+        btn.setOpaque(true);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return btn;
+    }
+
+    // ------------------------------------------------------------------ Logic
     private void handleSave() {
-        String name = txtName.getText();
-        String email = txtEmail.getText();
-        String role = (String) roleCombo.getSelectedItem();
-        String pass = new String(txtNewPass.getPassword());
+        String name  = txtName.getText().trim();
+        String email = txtEmail.getText().trim();
+        String phone = txtPhone.getText().trim();
+        String pass  = new String(txtPass.getPassword());
+        String conf  = new String(txtConfirmPass.getPassword());
+
+        String selectedRole = (String) roleCombo.getSelectedItem();
+        String role = "Counter Staff".equals(selectedRole) ? "CounterStaff" : selectedRole;
 
         if (!InputValidator.isNotEmpty(name) || !InputValidator.isNotEmpty(email)) {
-            JOptionPane.showMessageDialog(this, "Please fill in Name and Email.");
+            JOptionPane.showMessageDialog(this, "Full Name and Email Address are required.");
+            return;
+        }
+        if (!InputValidator.isValidEmail(email)) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address.");
+            return;
+        }
+        if (!pass.isEmpty() && !pass.equals(conf)) {
+            JOptionPane.showMessageDialog(this, "Passwords do not match.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (existingUser == null && pass.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "A password is required for new staff.");
             return;
         }
 
         if (existingUser == null) {
-            // Add Mode
-            controller.addStaff(name, email, pass, role);
+            controller.addStaff(name, email, phone, pass, role);
         } else {
-            // Update Mode
-            controller.updateStaff(existingUser.getId(), name, email, role);
+            controller.updateStaff(existingUser.getId(), name, email, phone, role,
+                                   pass.isEmpty() ? null : pass);
         }
 
         JOptionPane.showMessageDialog(this, "Staff saved successfully!");

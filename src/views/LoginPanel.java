@@ -14,43 +14,76 @@ public class LoginPanel extends JPanel {
     public LoginPanel(MainFrame parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
-        setBackground(new Color(240, 248, 255)); // Light blue matching wireframe
+        setBackground(Color.WHITE);
 
-        // --- UI Construction omitted for brevity (same as your current version) ---
-        // ... (Header and Central Login Box setup code) ...
-        
+        // 1. Header Bar
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(176, 196, 218));
+        header.setPreferredSize(new Dimension(0, 52));
+        header.setBorder(BorderFactory.createEmptyBorder(0, 18, 0, 18));
+
+        JLabel titleLabel = new JLabel("APU Automotive Service Centre");
+        titleLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        titleLabel.setForeground(new Color(30, 30, 50));
+        header.add(titleLabel, BorderLayout.WEST);
+
+        add(header, BorderLayout.NORTH);
+
         // 2. Central Login Box
         JPanel centerWrapper = new JPanel(new GridBagLayout());
-        centerWrapper.setOpaque(false);
-        
+        centerWrapper.setBackground(Color.WHITE);
+
         JPanel loginBox = new JPanel(new GridBagLayout());
-        loginBox.setPreferredSize(new Dimension(400, 300));
-        loginBox.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
+        loginBox.setPreferredSize(new Dimension(560, 300));
+        loginBox.setBorder(BorderFactory.createLineBorder(new Color(200, 210, 220), 1));
         loginBox.setBackground(Color.WHITE);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(18, 20, 18, 20);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // ID Input
+        // Login ID row
         gbc.gridx = 0; gbc.gridy = 0;
-        loginBox.add(new JLabel("Login :"), gbc);
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        JLabel loginLabel = new JLabel("Login :");
+        loginLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        loginBox.add(loginLabel, gbc);
+
         gbc.gridx = 1;
-        idField = new JTextField(15);
+        gbc.weightx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        idField = new JTextField(18);
+        idField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         loginBox.add(idField, gbc);
 
-        // Password Input
+        // Password row
         gbc.gridx = 0; gbc.gridy = 1;
-        loginBox.add(new JLabel("Password :"), gbc);
+        gbc.weightx = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        JLabel passLabel = new JLabel("Password :");
+        passLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        loginBox.add(passLabel, gbc);
+
         gbc.gridx = 1;
-        passField = new JPasswordField(15);
+        gbc.weightx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        passField = new JPasswordField(18);
+        passField.setFont(new Font("SansSerif", Font.PLAIN, 14));
         loginBox.add(passField, gbc);
 
-        // Login Button
+        // Login button row
         gbc.gridx = 0; gbc.gridy = 2;
         gbc.gridwidth = 2;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton loginBtn = new JButton("Login");
+        loginBtn.setPreferredSize(new Dimension(110, 34));
+        loginBtn.setFont(new Font("SansSerif", Font.PLAIN, 14));
         loginBtn.setBackground(new Color(189, 195, 199));
+        loginBtn.setFocusPainted(false);
+        loginBtn.setBorderPainted(true);
         loginBtn.addActionListener(e -> handleLogin());
         loginBox.add(loginBtn, gbc);
 
@@ -62,31 +95,25 @@ public class LoginPanel extends JPanel {
         String id = idField.getText();
         String pass = new String(passField.getPassword());
 
-        // Error Avoidance: Validation
         if (!InputValidator.isNotEmpty(id) || !InputValidator.isNotEmpty(pass)) {
             JOptionPane.showMessageDialog(this, "Fields cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Authenticate using the updated AuthController
         String[] userData = AuthController.login(id, pass);
 
         if (userData != null && userData.length >= 6) {
-            // Factory Pattern: Instantiate with all 6 columns
             // indices: 0:id, 1:pass(hash), 2:name, 3:role, 4:email, 5:contact
             User user = switch (userData[3]) {
-                case "Manager" -> new Manager(userData[0], userData[2], userData[1], userData[4], userData[5]);
-                case "Technician" -> new Technician(userData[0], userData[2], userData[1], userData[4], userData[5]);
+                case "Manager"      -> new Manager(userData[0], userData[2], userData[1], userData[4], userData[5]);
+                case "Technician"   -> new Technician(userData[0], userData[2], userData[1], userData[4], userData[5]);
                 case "CounterStaff" -> new CounterStaff(userData[0], userData[2], userData[1], userData[4], userData[5]);
-                default -> new Customer(userData[0], userData[2], userData[1], userData[4], userData[5]);
+                default             -> new Customer(userData[0], userData[2], userData[1], userData[4], userData[5]);
             };
 
             parent.setCurrentUser(user);
             JOptionPane.showMessageDialog(this, "Welcome, " + user.getName() + "!\n" + user.getDashboardAccess());
-            
-            // Navigate to the role's dashboard
-            // Note: Ensure these dashboard names are registered in MainFrame.java
-            parent.showView(user.getRole().toUpperCase()); 
+            parent.showView(user.getRole().toUpperCase());
         } else {
             JOptionPane.showMessageDialog(this, "Invalid ID or Password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
         }
