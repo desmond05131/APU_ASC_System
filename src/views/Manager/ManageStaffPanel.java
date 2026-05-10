@@ -4,16 +4,19 @@ import controllers.StaffController;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import models.User;
 
 public class ManageStaffPanel extends JPanel {
-    private JTable staffTable;
-    private DefaultTableModel tableModel;
-    private JTextField txtNameSearch, txtIdSearch;
-    private JComboBox<String> roleFilter;
-    private final StaffController controller;
+    private JTable             staffTable;
+    private DefaultTableModel  tableModel;
+    private JTextField         txtNameSearch, txtIdSearch;
+    private JComboBox<String>  roleFilter;
+    private JCheckBox          showDeletedCb;
+    private final StaffController  controller;
     private final ManagerDashboard dashboard;
+    // Always holds ALL users (active + deleted) so the renderer can look up deleted status.
     private ArrayList<User> cachedUsers = new ArrayList<>();
 
     public ManageStaffPanel(ManagerDashboard dashboard) {
@@ -58,7 +61,7 @@ public class ManageStaffPanel extends JPanel {
         box.add(txtNameSearch, g);
 
         g.gridx = 2; g.weightx = 0;
-        box.add(new JLabel("🔍"), g);   // 🔍
+        box.add(searchIconButton(), g);
 
         g.gridx = 3; g.weightx = 0;
         box.add(label("Role :"), g);
@@ -77,23 +80,37 @@ public class ManageStaffPanel extends JPanel {
         box.add(txtIdSearch, g);
 
         g.gridx = 2; g.weightx = 0;
-        box.add(new JLabel("🔍"), g);
+        box.add(searchIconButton(), g);
 
-        // Row 2 — Refresh + checkbox
+        // Row 2 — Refresh + Show deleted checkbox
         g.gridx = 0; g.gridy = 2; g.weightx = 0; g.fill = GridBagConstraints.NONE;
         JButton refresh = styledButton("Refresh", new Color(100, 100, 248));
         refresh.addActionListener(e -> refreshTable());
         box.add(refresh, g);
 
         g.gridx = 1; g.gridwidth = 3; g.fill = GridBagConstraints.HORIZONTAL;
-        JCheckBox showDeleted = new JCheckBox("Show deleted account");
-        showDeleted.setOpaque(false);
-        showDeleted.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        box.add(showDeleted, g);
+        showDeletedCb = new JCheckBox("Show deleted account");
+        showDeletedCb.setOpaque(false);
+        showDeletedCb.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        showDeletedCb.addActionListener(e -> applyFilters());
+        box.add(showDeletedCb, g);
         g.gridwidth = 1;
 
         wrapper.add(box, BorderLayout.CENTER);
         return wrapper;
+    }
+
+    /** A small icon-only button that triggers the filter — same behaviour as Refresh. */
+    private JButton searchIconButton() {
+        JButton btn = new JButton("🔍");
+        btn.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn.setToolTipText("Search");
+        btn.addActionListener(e -> applyFilters());
+        return btn;
     }
 
     private JTextField searchField() {
@@ -122,6 +139,33 @@ public class ManageStaffPanel extends JPanel {
         staffTable.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
         staffTable.getTableHeader().setBackground(new Color(245, 247, 250));
         staffTable.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        // Renderer: deleted rows appear in red
+        staffTable.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(
+                        table, value, isSelected, hasFocus, row, column);
+                if (row >= tableModel.getRowCount()) return c;
+                String id = tableModel.getValueAt(row, 0).toString();
+                boolean deleted = cachedUsers.stream()
+                        .filter(u -> u.getId().equals(id))
+                        .findFirst()
+                        .map(User::isDeleted)
+                        .orElse(false);
+                if (deleted) {
+                    c.setForeground(new Color(180, 30, 30));
+                    c.setBackground(isSelected ? new Color(255, 190, 190)
+                                               : new Color(255, 238, 238));
+                } else {
+                    c.setForeground(Color.BLACK);
+                    c.setBackground(isSelected ? new Color(220, 225, 255) : Color.WHITE);
+                }
+                return c;
+            }
+        });
+
         return new JScrollPane(staffTable);
     }
 
@@ -140,6 +184,7 @@ public class ManageStaffPanel extends JPanel {
         btnUpdate.addActionListener(e -> {
             User u = getSelectedUser();
             if (u == null) { showMsg("Please select a staff member to update."); return; }
+            if (u.isDeleted()) { showMsg("Cannot edit a deleted account."); return; }
             dashboard.openUserDetail(u);
         });
 
@@ -147,17 +192,21 @@ public class ManageStaffPanel extends JPanel {
             txtNameSearch.setText("");
             txtIdSearch.setText("");
             roleFilter.setSelectedIndex(0);
+            showDeletedCb.setSelected(false);
             refreshTable();
         });
 
         btnDelete.addActionListener(e -> {
             User u = getSelectedUser();
-            if (u == null) { showMsg("Please select a staff member to delete."); return; }
+            if (u == null)       { showMsg("Please select a staff member to delete."); return; }
+            if (u.isDeleted())   { showMsg("This account is already deleted.");        return; }
             int ok = JOptionPane.showConfirmDialog(this,
-                "Delete " + u.getName() + " (" + u.getId() + ")?",
-                "Confirm Delete", JOptionPane.YES_NO_OPTION);
+                "Delete " + u.getName() + " (" + u.getId() + ")?\n"
+                + "The account will be marked as deleted and can be viewed via "
+                + "\"Show deleted account\".",
+                "Confirm Soft Delete", JOptionPane.YES_NO_OPTION);
             if (ok == JOptionPane.YES_OPTION && controller.deleteStaff(u.getId())) {
-                JOptionPane.showMessageDialog(this, "Deleted successfully.");
+                JOptionPane.showMessageDialog(this, "Account deleted successfully.");
                 refreshTable();
             }
         });
@@ -193,22 +242,28 @@ public class ManageStaffPanel extends JPanel {
         JOptionPane.showMessageDialog(this, msg);
     }
 
+    /** Reload from file (picks up any external changes) then re-apply filters. */
     public final void refreshTable() {
-        cachedUsers = controller.getAllUsers();
+        cachedUsers = controller.getAllUsersIncludingDeleted();
         applyFilters();
     }
 
     private void applyFilters() {
-        String nameQ = txtNameSearch != null ? txtNameSearch.getText().trim().toLowerCase() : "";
-        String idQ   = txtIdSearch   != null ? txtIdSearch.getText().trim().toLowerCase()   : "";
-        String roleQ = roleFilter     != null ? (String) roleFilter.getSelectedItem()        : "All";
+        String nameQ  = txtNameSearch != null ? txtNameSearch.getText().trim().toLowerCase() : "";
+        String idQ    = txtIdSearch   != null ? txtIdSearch.getText().trim().toLowerCase()   : "";
+        String roleQ  = roleFilter    != null ? (String) roleFilter.getSelectedItem()        : "All";
+        boolean showD = showDeletedCb != null && showDeletedCb.isSelected();
 
         tableModel.setRowCount(0);
         for (User u : cachedUsers) {
+            // Hide deleted users unless the checkbox is ticked
+            if (u.isDeleted() && !showD) continue;
+
             boolean matchName = nameQ.isEmpty() || u.getName().toLowerCase().contains(nameQ);
             boolean matchId   = idQ.isEmpty()   || u.getId().toLowerCase().contains(idQ);
             boolean matchRole = "All".equals(roleQ)
-                || u.getRole().equalsIgnoreCase(roleQ.replace(" ", ""));
+                    || u.getRole().equalsIgnoreCase(roleQ.replace(" ", ""));
+
             if (matchName && matchId && matchRole) {
                 tableModel.addRow(new Object[]{
                     u.getId(), u.getName(), u.getRole(),
@@ -216,5 +271,7 @@ public class ManageStaffPanel extends JPanel {
                 });
             }
         }
+        // Force the custom renderer to repaint so red rows appear immediately
+        staffTable.repaint();
     }
 }

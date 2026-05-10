@@ -29,23 +29,38 @@ public class StaffController {
             String role     = p[3];
             String email    = p.length > 4 ? p[4] : "";
             String contact  = p.length > 5 ? p[5] : "";
-            switch (role) {
-                case "Manager"      -> allUsers.add(new Manager(id, name, password, email, contact));
-                case "Technician"   -> allUsers.add(new Technician(id, name, password, email, contact));
-                case "CounterStaff" -> allUsers.add(new CounterStaff(id, name, password, email, contact));
+            boolean deleted = p.length > 6 && "DELETED".equals(p[6]);
+
+            User user = switch (role) {
+                case "Manager"      -> new Manager(id, name, password, email, contact);
+                case "Technician"   -> new Technician(id, name, password, email, contact);
+                case "CounterStaff" -> new CounterStaff(id, name, password, email, contact);
+                default -> null;
+            };
+            if (user != null) {
+                user.setDeleted(deleted);
+                allUsers.add(user);
             }
         }
     }
 
-    /** All users across all roles. */
+    /** Active (non-deleted) users only. */
     public ArrayList<User> getAllUsers() {
+        loadUsers();
+        return allUsers.stream()
+            .filter(u -> !u.isDeleted())
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /** All users including soft-deleted ones. */
+    public ArrayList<User> getAllUsersIncludingDeleted() {
         loadUsers();
         return new ArrayList<>(allUsers);
     }
 
-    /** Non-manager staff only (Technician + CounterStaff). */
+    /** Non-manager active staff only (Technician + CounterStaff). */
     public ArrayList<User> getStaffOnly() {
-        return allUsers.stream()
+        return getAllUsers().stream()
             .filter(u -> u instanceof Technician || u instanceof CounterStaff)
             .collect(Collectors.toCollection(ArrayList::new));
     }
@@ -62,7 +77,7 @@ public class StaffController {
         };
 
         allUsers.add(newUser);
-        FileHandler.writeData("users.txt", toFileLine(newUser));
+        saveAllUsers();
         return true;
     }
 
@@ -84,11 +99,17 @@ public class StaffController {
         return false;
     }
 
+    /** Soft delete — marks the user DELETED without removing the record. */
     public boolean deleteStaff(String id) {
         loadUsers();
-        boolean removed = allUsers.removeIf(u -> u.getId().equals(id));
-        if (removed) saveAllUsers();
-        return removed;
+        for (User u : allUsers) {
+            if (u.getId().equals(id) && !u.isDeleted()) {
+                u.setDeleted(true);
+                saveAllUsers();
+                return true;
+            }
+        }
+        return false;
     }
 
     private void saveAllUsers() {
@@ -100,8 +121,10 @@ public class StaffController {
     }
 
     private String toFileLine(User u) {
-        return String.join("|", u.getId(), u.getPassword(), u.getName(),
-                           u.getRole(), u.getEmail(), u.getContactNumber());
+        return String.join("|",
+            u.getId(), u.getPassword(), u.getName(),
+            u.getRole(), u.getEmail(), u.getContactNumber(),
+            u.isDeleted() ? "DELETED" : "ACTIVE");
     }
 
     private String generateId(String role) {

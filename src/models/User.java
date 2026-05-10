@@ -9,6 +9,7 @@ public abstract class User {
     private String role;
     private String email;
     private String contactNumber;
+    private boolean deleted = false;
 
     public User(String id, String name, String password, String role, String email, String contactNumber) {
         this.id = id;
@@ -40,4 +41,7 @@ public abstract class User {
 
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 }
