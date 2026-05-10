@@ -10,5 +10,9 @@
             "path": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.6.7-hotspot",
             "default": true
         }
-    ]
+    ],
+    "terminal.integrated.env.windows": {
+        "JAVA_HOME": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.6.7-hotspot",
+        "PATH": "C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.6.7-hotspot\\bin;${env:PATH}"
+    }
 }

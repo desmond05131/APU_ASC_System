@@ -6,6 +6,7 @@ public class Service {
     private String category;
     private String description; // Added new field
     private double price;
+    private boolean deleted = false;
 
     public Service(String id, String name, String category, String description, double price) {
         this.id = id;
@@ -25,6 +26,8 @@ public class Service {
     public void setDescription(String description) { this.description = description; }
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+    public boolean isDeleted() { return deleted; }
+    public void setDeleted(boolean deleted) { this.deleted = deleted; }
 
     @Override
     public String toString() {

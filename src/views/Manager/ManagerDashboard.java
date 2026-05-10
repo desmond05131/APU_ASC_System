@@ -57,6 +57,7 @@ public class ManagerDashboard extends JPanel implements Dashboard {
     }
 
     public void showServiceManagement() {
+        servicePanel.refreshTable();
         cardLayout.show(contentArea, "MANAGE_SERVICES");
     }
 
