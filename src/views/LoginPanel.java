@@ -89,6 +89,15 @@ public class LoginPanel extends JPanel {
 
         centerWrapper.add(loginBox);
         add(centerWrapper, BorderLayout.CENTER);
+
+        // Clear credentials each time the panel is shown (e.g. after logout)
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+                idField.setText("");
+                passField.setText("");
+            }
+        });
     }
 
     private void handleLogin() {
@@ -103,6 +112,11 @@ public class LoginPanel extends JPanel {
         String[] userData = AuthController.login(id, pass);
 
         if (userData != null && userData.length >= 6) {
+            // Reject soft-deleted accounts
+            if (userData.length >= 7 && "DELETED".equals(userData[6])) {
+                JOptionPane.showMessageDialog(this, "This account has been deactivated.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             // indices: 0:id, 1:pass(hash), 2:name, 3:role, 4:email, 5:contact
             User user = switch (userData[3]) {
                 case "Manager"      -> new Manager(userData[0], userData[2], userData[1], userData[4], userData[5]);

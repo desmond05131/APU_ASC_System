@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
 import models.User;
+import views.Customer.CustomerDashboard;
 import views.Manager.ManagerDashboard;
-// Import other dashboards as you create them
-// import views.Technician.TechnicianDashboard;
 
 public class MainFrame extends JFrame {
     private final CardLayout cardLayout;
@@ -48,8 +47,8 @@ public class MainFrame extends JFrame {
 
     private JPanel createDashboard(String role) {
         return switch (role) {
-            case "MANAGER" -> new ManagerDashboard(this);
-            // case "TECHNICIAN" -> new TechnicianDashboard(this);
+            case "MANAGER"  -> new ManagerDashboard(this);
+            case "CUSTOMER" -> new CustomerDashboard(this);
             default -> null;
         };
     }

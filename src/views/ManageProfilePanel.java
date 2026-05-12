@@ -120,7 +120,8 @@ public class ManageProfilePanel extends JPanel {
 
         FileHandler.updateLine("users.txt", user.getId(),
             String.join("|", user.getId(), user.getPassword(), user.getName(),
-                        user.getRole(), user.getEmail(), user.getContactNumber()));
+                        user.getRole(), user.getEmail(), user.getContactNumber(),
+                        user.isDeleted() ? "DELETED" : "ACTIVE"));
 
         JOptionPane.showMessageDialog(this, "Profile updated successfully!");
     }
