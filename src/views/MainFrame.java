@@ -7,6 +7,7 @@ import javax.swing.*;
 import models.User;
 import views.Customer.CustomerDashboard;
 import views.Manager.ManagerDashboard;
+import views.Technician.TechnicianDashboard;
 
 public class MainFrame extends JFrame {
     private final CardLayout cardLayout;
@@ -48,7 +49,8 @@ public class MainFrame extends JFrame {
     private JPanel createDashboard(String role) {
         return switch (role) {
             case "MANAGER"  -> new ManagerDashboard(this);
-            case "CUSTOMER" -> new CustomerDashboard(this);
+            case "CUSTOMER"    -> new CustomerDashboard(this);
+            case "TECHNICIAN"  -> new TechnicianDashboard(this);
             default -> null;
         };
     }

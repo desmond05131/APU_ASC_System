@@ -121,20 +121,22 @@ public final class FeedbackPanel extends JPanel {
 
     public void loadFeedback() {
         model.setRowCount(0);
+        String currentName = dashboard.getMainFrame().getCurrentUser().getName();
         for (String line : FileHandler.readData("feedback.txt")) {
             if (line.trim().isEmpty()) continue;
             String[] parts = line.split("\\|");
             if (parts.length < 5) continue;
-            // Skip soft-deleted entries
             if (parts.length >= 8 && "DELETED".equals(parts[7])) continue;
+            // Only show this customer's own feedback
+            if (!parts[2].equalsIgnoreCase(currentName)) continue;
             try {
                 int rating = Integer.parseInt(parts[1].trim());
                 model.addRow(new Object[]{
-                    parts[0],          // Feedback ID (hidden column)
-                    rating + " ⭐",     // Rating
-                    parts[2],          // Customer name
-                    parts[3],          // Comment
-                    parts[4]           // Date
+                    parts[0],
+                    rating + " ⭐",
+                    parts[2],
+                    parts[3],
+                    parts[4]
                 });
             } catch (NumberFormatException ignored) {}
         }

@@ -11,6 +11,7 @@ public final class CustomerDashboard extends JPanel implements Dashboard {
     private final CardLayout cardLayout;
     private final JPanel contentArea;
     private final FeedbackPanel feedbackPanel;
+    private final AddFeedbackPanel addFeedbackPanel;
     private final MainFrame mainFrame;
 
     public CustomerDashboard(MainFrame parent) {
@@ -26,7 +27,8 @@ public final class CustomerDashboard extends JPanel implements Dashboard {
 
         feedbackPanel = new FeedbackPanel(this);
         contentArea.add(feedbackPanel, "FEEDBACK");
-        contentArea.add(new AddFeedbackPanel(this), "ADD_FEEDBACK");
+        addFeedbackPanel = new AddFeedbackPanel(this);
+        contentArea.add(addFeedbackPanel, "ADD_FEEDBACK");
 
         add(new Navbar(parent, this, "Customer"), BorderLayout.NORTH);
         add(contentArea, BorderLayout.CENTER);
@@ -36,9 +38,8 @@ public final class CustomerDashboard extends JPanel implements Dashboard {
 
     @Override
     public void switchContent(String viewName) {
-        if ("FEEDBACK".equals(viewName)) {
-            feedbackPanel.loadFeedback();
-        }
+        if ("FEEDBACK".equals(viewName))     feedbackPanel.loadFeedback();
+        if ("ADD_FEEDBACK".equals(viewName)) addFeedbackPanel.loadCompletedAppointments();
         cardLayout.show(contentArea, viewName);
     }
 

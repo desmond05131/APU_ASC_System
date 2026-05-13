@@ -1,4 +1,4 @@
-package views.Customer;
+package views.Technician;
 
 import controllers.AppointmentController;
 import java.awt.*;
@@ -10,21 +10,21 @@ import models.AppointmentStatus;
 import models.Feedback;
 import services.FileHandler;
 
-public class AddFeedbackPanel extends JPanel {
-
-    private final CustomerDashboard dashboard;
+public class ProvideFeedbackPanel extends JPanel {
+    private final TechnicianDashboard dashboard;
     private JComboBox<String> cmbAppointment;
-    private JComboBox<String> ratingBox;
-    private JTextArea txtComment;
+    private JComboBox<String> cmbRating;
+    private JTextArea         txtComment;
+    // Parallel list of appointment IDs matching combobox entries
     private final ArrayList<String> apptIds = new ArrayList<>();
 
-    public AddFeedbackPanel(CustomerDashboard dashboard) {
+    public ProvideFeedbackPanel(TechnicianDashboard dashboard) {
         this.dashboard = dashboard;
 
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
 
-        JLabel header = new JLabel("  Add Feedback");
+        JLabel header = new JLabel("  Provide Technical Feedback");
         header.setFont(new Font("SansSerif", Font.BOLD, 18));
         header.setPreferredSize(new Dimension(0, 50));
         add(header, BorderLayout.NORTH);
@@ -38,11 +38,11 @@ public class AddFeedbackPanel extends JPanel {
         form.add(cmbAppointment);
 
         form.add(new JLabel("Rating:"));
-        ratingBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
-        form.add(ratingBox);
+        cmbRating = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
+        form.add(cmbRating);
 
-        form.add(new JLabel("Comment:"));
-        txtComment = new JTextArea(3, 20);
+        form.add(new JLabel("Technical Comment:"));
+        txtComment = new JTextArea(5, 20);
         txtComment.setLineWrap(true);
         txtComment.setWrapStyleWord(true);
         form.add(new JScrollPane(txtComment));
@@ -53,38 +53,42 @@ public class AddFeedbackPanel extends JPanel {
         btnPanel.setBackground(Color.WHITE);
         JButton submitBtn = new JButton("Submit");
         JButton cancelBtn = new JButton("Cancel");
-        submitBtn.addActionListener(e -> saveFeedback());
-        cancelBtn.addActionListener(e -> dashboard.switchContent("FEEDBACK"));
+        submitBtn.addActionListener(e -> handleSubmit());
+        cancelBtn.addActionListener(e -> dashboard.switchContent("APPOINTMENTS"));
         btnPanel.add(submitBtn);
         btnPanel.add(cancelBtn);
         add(btnPanel, BorderLayout.SOUTH);
+
+        loadCompletedAppointments();
     }
 
-    // Called by CustomerDashboard.switchContent("ADD_FEEDBACK") to refresh the list
+    // Called by TechnicianDashboard.switchContent("FEEDBACK") to refresh the list
     public void loadCompletedAppointments() {
         cmbAppointment.removeAllItems();
         apptIds.clear();
-        String customerId = dashboard.getMainFrame().getCurrentUser().getId();
+        String techId = dashboard.getMainFrame().getCurrentUser().getId();
         for (Appointment appt : AppointmentController.getAllAppointments()) {
-            if (!appt.getCustomerId().equals(customerId)) continue;
-            if (appt.getStatus() != AppointmentStatus.COMPLETED
-                    && appt.getStatus() != AppointmentStatus.PAID) continue;
+            // Appointment has no getTechnicianId() — extract from file-format string at index 6
+            String[] parts = appt.toFileFormat().split("\\|");
+            if (parts.length < 7 || !parts[6].equals(techId)) continue;
+            if (appt.getStatus() != AppointmentStatus.COMPLETED) continue;
             cmbAppointment.addItem(appt.getAppointmentId()
                     + " — " + appt.getServiceType()
-                    + " (" + appt.getScheduledDate() + ")");
+                    + " (" + appt.getScheduledDate() + ")"
+                    + " — " + appt.getCustomerId());
             apptIds.add(appt.getAppointmentId());
         }
     }
 
-    private void saveFeedback() {
+    private void handleSubmit() {
         if (cmbAppointment.getItemCount() == 0) {
             JOptionPane.showMessageDialog(this,
-                    "No completed appointments available to give feedback for.");
+                    "No completed appointments available to provide feedback for.");
             return;
         }
         String comment = txtComment.getText().trim();
         if (comment.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please enter a comment!");
+            JOptionPane.showMessageDialog(this, "Please enter a technical comment.");
             return;
         }
 
@@ -92,6 +96,7 @@ public class AddFeedbackPanel extends JPanel {
         if (idx < 0 || idx >= apptIds.size()) return;
         String apptId = apptIds.get(idx);
 
+        // Look up serviceType from the selected appointment
         String serviceName = "";
         for (Appointment appt : AppointmentController.getAllAppointments()) {
             if (appt.getAppointmentId().equals(apptId)) {
@@ -100,29 +105,32 @@ public class AddFeedbackPanel extends JPanel {
             }
         }
 
-        // Max-ID scan avoids collisions with soft-deleted entries
-        int max = 0;
+        // Generate next feedback ID — find max numeric suffix after "F"
+        int maxId = 0;
         for (String line : FileHandler.readData("feedback.txt")) {
             if (line.trim().isEmpty()) continue;
             String[] p = line.split("\\|");
-            if (p.length > 0 && p[0].startsWith("F")) {
-                try { max = Math.max(max, Integer.parseInt(p[0].substring(1))); }
+            if (p.length > 0 && p[0].length() > 1 && p[0].startsWith("F")) {
+                try { maxId = Math.max(maxId, Integer.parseInt(p[0].substring(1))); }
                 catch (NumberFormatException ignored) {}
             }
         }
-        String newId = String.format("F%03d", max + 1);
+        String newId = String.format("F%03d", maxId + 1);
 
-        int rating = Integer.parseInt((String) ratingBox.getSelectedItem());
-        String customerName = dashboard.getMainFrame().getCurrentUser().getName();
+        int rating = Integer.parseInt((String) cmbRating.getSelectedItem());
+        // customerName field stores the feedback author; here it is the technician.
+        // Manager's Review Feedback panel labels this "Customer Name" — known semantic compromise.
+        String authorName = dashboard.getMainFrame().getCurrentUser().getName();
         String date = LocalDate.now().toString();
 
-        Feedback fb = new Feedback(newId, rating, customerName, comment, date);
+        Feedback fb = new Feedback(newId, rating, authorName, comment, date);
         fb.setServiceName(serviceName);
-        fb.setCategory("Customer");
+        fb.setCategory("Technician"); // Allows Manager to filter technician feedback distinctly
+
         FileHandler.writeData("feedback.txt", fb.toString());
 
-        JOptionPane.showMessageDialog(this, "Feedback submitted!");
+        JOptionPane.showMessageDialog(this, "Feedback submitted successfully!");
         txtComment.setText("");
-        dashboard.switchContent("FEEDBACK");
+        dashboard.switchContent("APPOINTMENTS");
     }
 }
