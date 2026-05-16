@@ -1,5 +1,5 @@
-S101|Full Car Wash|Wash|Comprehensive exterior and interior cleaning including vacuum|120.00|ACTIVE
-S102|Engine Repair|Repair|Full engine diagnostic and repair service|350.00|ACTIVE
-S103|Oil Change|Maintenance|Engine oil and oil filter replacement|80.00|ACTIVE
-S104|Brake Inspection|Repair|Brake pad inspection and replacement if worn|150.00|ACTIVE
-S105|Tyre Rotation|Maintenance|Rotate all four tyres for even tread wear|60.00|ACTIVE
+S101|Full Car Wash|Normal|Comprehensive exterior and interior cleaning including vacuum|120.00|ACTIVE
+S102|Engine Repair|Major|Full engine diagnostic and repair service|350.00|ACTIVE
+S103|Oil Change|Normal|Engine oil and oil filter replacement|80.00|ACTIVE
+S104|Brake Inspection|Major|Brake pad inspection and replacement if worn|150.00|ACTIVE
+S105|Tyre Rotation|Normal|Rotate all four tyres for even tread wear|60.00|ACTIVE

@@ -15,7 +15,6 @@ public class ProvideFeedbackPanel extends JPanel {
     private JComboBox<String> cmbAppointment;
     private JComboBox<String> cmbRating;
     private JTextArea         txtComment;
-    // Parallel list of appointment IDs matching combobox entries
     private final ArrayList<String> apptIds = new ArrayList<>();
 
     public ProvideFeedbackPanel(TechnicianDashboard dashboard) {
@@ -62,15 +61,13 @@ public class ProvideFeedbackPanel extends JPanel {
         loadCompletedAppointments();
     }
 
-    // Called by TechnicianDashboard.switchContent("FEEDBACK") to refresh the list
+    /** Called by TechnicianDashboard.switchContent("FEEDBACK") to refresh the list. */
     public void loadCompletedAppointments() {
         cmbAppointment.removeAllItems();
         apptIds.clear();
         String techId = dashboard.getMainFrame().getCurrentUser().getId();
         for (Appointment appt : AppointmentController.getAllAppointments()) {
-            // Appointment has no getTechnicianId() — extract from file-format string at index 6
-            String[] parts = appt.toFileFormat().split("\\|");
-            if (parts.length < 7 || !parts[6].equals(techId)) continue;
+            if (!appt.getTechnicianId().equals(techId)) continue;
             if (appt.getStatus() != AppointmentStatus.COMPLETED) continue;
             cmbAppointment.addItem(appt.getAppointmentId()
                     + " — " + appt.getServiceType()
@@ -96,37 +93,36 @@ public class ProvideFeedbackPanel extends JPanel {
         if (idx < 0 || idx >= apptIds.size()) return;
         String apptId = apptIds.get(idx);
 
-        // Look up serviceType from the selected appointment
+        // Look up serviceType and customerId from the selected appointment
         String serviceName = "";
+        String customerId  = "";
         for (Appointment appt : AppointmentController.getAllAppointments()) {
             if (appt.getAppointmentId().equals(apptId)) {
                 serviceName = appt.getServiceType();
+                customerId  = appt.getCustomerId();
                 break;
             }
         }
 
-        // Generate next feedback ID — find max numeric suffix after "F"
+        // Max-ID scan to avoid collisions with soft-deleted entries
         int maxId = 0;
         for (String line : FileHandler.readData("feedback.txt")) {
             if (line.trim().isEmpty()) continue;
             String[] p = line.split("\\|");
-            if (p.length > 0 && p[0].length() > 1 && p[0].startsWith("F")) {
+            if (p.length > 0 && p[0].startsWith("F")) {
                 try { maxId = Math.max(maxId, Integer.parseInt(p[0].substring(1))); }
                 catch (NumberFormatException ignored) {}
             }
         }
         String newId = String.format("F%03d", maxId + 1);
 
-        int rating = Integer.parseInt((String) cmbRating.getSelectedItem());
-        // customerName field stores the feedback author; here it is the technician.
-        // Manager's Review Feedback panel labels this "Customer Name" — known semantic compromise.
+        int    rating     = Integer.parseInt((String) cmbRating.getSelectedItem());
         String authorName = dashboard.getMainFrame().getCurrentUser().getName();
-        String date = LocalDate.now().toString();
+        String date       = LocalDate.now().toString();
 
-        Feedback fb = new Feedback(newId, rating, authorName, comment, date);
+        Feedback fb = new Feedback(newId, customerId, rating, authorName, comment, date);
         fb.setServiceName(serviceName);
-        fb.setCategory("Technician"); // Allows Manager to filter technician feedback distinctly
-
+        fb.setCategory("Technician");
         FileHandler.writeData("feedback.txt", fb.toString());
 
         JOptionPane.showMessageDialog(this, "Feedback submitted successfully!");

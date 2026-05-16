@@ -2,10 +2,12 @@ package views.Technician;
 
 import controllers.AppointmentController;
 import java.awt.*;
+import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import models.Appointment;
 import models.AppointmentStatus;
+import services.FileHandler;
 
 public class AssignAppointmentList extends JPanel {
     private JTable            table;
@@ -48,13 +50,16 @@ public class AssignAppointmentList extends JPanel {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
 
-        JButton btnRefresh  = styledButton("Refresh",          new Color(100, 100, 248));
-        JButton btnComplete = styledButton("Mark Completed",    new Color(100, 100, 248));
+        JButton btnRefresh  = styledButton("Refresh",        new Color(100, 100, 248));
+        JButton btnComments = styledButton("View Comments",  new Color(100, 100, 248));
+        JButton btnComplete = styledButton("Mark Completed", new Color(100, 100, 248));
 
-        btnRefresh.addActionListener(e -> refreshTable());
+        btnRefresh .addActionListener(e -> refreshTable());
+        btnComments.addActionListener(e -> handleViewComments());
         btnComplete.addActionListener(e -> handleMarkCompleted());
 
         row.add(btnRefresh);
+        row.add(btnComments);
         row.add(btnComplete);
         return row;
     }
@@ -91,13 +96,63 @@ public class AssignAppointmentList extends JPanel {
         refreshTable();
     }
 
+    private void handleViewComments() {
+        int row = table.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Please select an appointment.");
+            return;
+        }
+        String customerId = tableModel.getValueAt(row, 5).toString();
+
+        StringBuilder sb = new StringBuilder();
+        for (String line : FileHandler.readData("feedback.txt")) {
+            if (line.trim().isEmpty()) continue;
+            String[] p = line.split("\\|");
+            // New format: feedbackId|customerId|rating|name|comment|date|svcName|category|status
+            if (p.length < 9) continue;
+            if (isNumeric(p[1])) continue;          // skip legacy 8-field rows
+            if (!"ACTIVE".equals(p[8])) continue;   // skip deleted
+            if (!p[1].equals(customerId)) continue;  // filter by appointment's customer
+            if (!p[7].startsWith("Customer-")) continue; // customer-authored only
+
+            String subject = p[7].replace("Customer-", "");
+            int rating = 0;
+            try { rating = Integer.parseInt(p[2].trim()); } catch (NumberFormatException ignored) {}
+
+            sb.append("[").append(subject).append(" — ").append(p[5])
+              .append(" — ").append(rating).append("★]\n")
+              .append(p[4]).append("\n\n");
+        }
+
+        String msg = sb.isEmpty()
+                ? "No customer comments for this appointment yet."
+                : sb.toString().trim();
+
+        JTextArea area = new JTextArea(msg, 10, 40);
+        area.setEditable(false);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setFont(new Font("SansSerif", Font.PLAIN, 13));
+
+        JDialog dialog = new JDialog(SwingUtilities.getWindowAncestor(this),
+                "Customer Comments — " + customerId, Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setLayout(new BorderLayout(0, 8));
+        dialog.add(new JScrollPane(area), BorderLayout.CENTER);
+        JButton close = new JButton("Close");
+        close.addActionListener(e -> dialog.dispose());
+        JPanel foot = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        foot.add(close);
+        dialog.add(foot, BorderLayout.SOUTH);
+        dialog.setSize(520, 340);
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+    }
+
     public void refreshTable() {
         tableModel.setRowCount(0);
         String techId = dashboard.getMainFrame().getCurrentUser().getId();
         for (Appointment appt : AppointmentController.getAllAppointments()) {
-            // Appointment has no getTechnicianId() — extract from file-format string at index 6
-            String[] parts = appt.toFileFormat().split("\\|");
-            if (parts.length < 7 || !parts[6].equals(techId)) continue;
+            if (!appt.getTechnicianId().equals(techId)) continue;
             tableModel.addRow(new Object[]{
                 appt.getAppointmentId(),
                 appt.getServiceType(),
@@ -107,5 +162,10 @@ public class AssignAppointmentList extends JPanel {
                 appt.getCustomerId()
             });
         }
+    }
+
+    private static boolean isNumeric(String s) {
+        try { Integer.parseInt(s.trim()); return true; }
+        catch (NumberFormatException e) { return false; }
     }
 }

@@ -2,6 +2,7 @@ package views.Manager;
 
 import controllers.StaffController;
 import java.awt.*;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -174,10 +175,11 @@ public class ManageStaffPanel extends JPanel {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
 
-        JButton btnAdd    = styledButton("Add Staff",    new Color(100, 100, 248));
-        JButton btnUpdate = styledButton("Update Staff", new Color(100, 100, 248));
-        JButton btnClear  = styledButton("Clear",        new Color(100, 100, 248));
-        JButton btnDelete = styledButton("Delete Staff", new Color(200, 48, 60));
+        JButton btnAdd    = styledButton("Add Staff",      new Color(100, 100, 248));
+        JButton btnUpdate = styledButton("Update Staff",   new Color(100, 100, 248));
+        JButton btnReset  = styledButton("Reset Password", new Color(100, 100, 248));
+        JButton btnClear  = styledButton("Clear",          new Color(100, 100, 248));
+        JButton btnDelete = styledButton("Delete Staff",   new Color(200, 48, 60));
 
         btnAdd.addActionListener(e -> dashboard.openUserDetail(null));
 
@@ -186,6 +188,32 @@ public class ManageStaffPanel extends JPanel {
             if (u == null) { showMsg("Please select a staff member to update."); return; }
             if (u.isDeleted()) { showMsg("Cannot edit a deleted account."); return; }
             dashboard.openUserDetail(u);
+        });
+
+        btnReset.addActionListener(e -> {
+            User u = getSelectedUser();
+            if (u == null)     { showMsg("Please select a staff member."); return; }
+            if (u.isDeleted()) { showMsg("Cannot reset password for a deleted account."); return; }
+            int ok = JOptionPane.showConfirmDialog(this,
+                    "Reset password for " + u.getName() + "?",
+                    "Confirm Reset", JOptionPane.YES_NO_OPTION);
+            if (ok != JOptionPane.YES_OPTION) return;
+
+            String tempPassword = generateTempPassword();
+            controller.updateStaff(u.getId(), u.getName(), u.getEmail(),
+                                   u.getContactNumber(), u.getRole(), tempPassword);
+
+            JTextField tmpField = new JTextField(tempPassword);
+            tmpField.setEditable(false);
+            tmpField.setFont(new Font("Monospaced", Font.BOLD, 14));
+            tmpField.setHorizontalAlignment(SwingConstants.CENTER);
+            JPanel msgPanel = new JPanel(new BorderLayout(0, 8));
+            msgPanel.add(new JLabel("<html>New temporary password for <b>" + u.getName() + "</b>:"
+                    + "<br>Please pass this to the user. They should change it on first login.</html>"),
+                    BorderLayout.NORTH);
+            msgPanel.add(tmpField, BorderLayout.CENTER);
+            JOptionPane.showMessageDialog(this, msgPanel, "Password Reset", JOptionPane.INFORMATION_MESSAGE);
+            refreshTable();
         });
 
         btnClear.addActionListener(e -> {
@@ -213,6 +241,7 @@ public class ManageStaffPanel extends JPanel {
 
         row.add(btnAdd);
         row.add(btnUpdate);
+        row.add(btnReset);
         row.add(btnClear);
         row.add(btnDelete);
         return row;
@@ -240,6 +269,14 @@ public class ManageStaffPanel extends JPanel {
 
     private void showMsg(String msg) {
         JOptionPane.showMessageDialog(this, msg);
+    }
+
+    private String generateTempPassword() {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom rng = new SecureRandom();
+        StringBuilder sb = new StringBuilder(8);
+        for (int i = 0; i < 8; i++) sb.append(chars.charAt(rng.nextInt(chars.length())));
+        return sb.toString();
     }
 
     /** Reload from file (picks up any external changes) then re-apply filters. */

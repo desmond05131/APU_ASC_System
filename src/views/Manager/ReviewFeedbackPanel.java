@@ -60,7 +60,8 @@ public class ReviewFeedbackPanel extends JPanel {
         box.add(cmbRating, g);
         g.gridx = 4; g.weightx = 0;    box.add(label("Category :"), g);
         g.gridx = 5; g.weightx = 0.22;
-        cmbCategory = new JComboBox<>(new String[]{"All", "Wash", "Repair", "Maintenance"});
+        cmbCategory = new JComboBox<>(new String[]{
+                "All", "Customer-CounterStaff", "Customer-Technician", "Customer-Overall", "Technician"});
         cmbCategory.setFont(new Font("SansSerif", Font.PLAIN, 13));
         box.add(cmbCategory, g);
 

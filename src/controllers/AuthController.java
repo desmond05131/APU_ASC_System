@@ -1,30 +1,59 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import services.FileHandler;
 import utils.PasswordHasher;
 
 public class AuthController {
-    private static final String USER_FILE = "users.txt";
+    private static final String USER_FILE    = "users.txt";
+    private static final int    MAX_ATTEMPTS = 3;
+    private static final long   LOCK_MS      = 30_000L;
+
+    private static final Map<String, Integer> failures    = new HashMap<>();
+    private static final Map<String, Long>    lockedUntil = new HashMap<>();
 
     /**
-     * Validates credentials and returns all user details if successful.
-     * Expects users.txt format: id|hashed_password|name|role|email|contact
+     * Returns user data array on success, a {"LOCKED", secondsRemaining} sentinel
+     * if the account is temporarily locked, or null on bad credentials.
      */
     public static String[] login(String userId, String password) {
-        ArrayList<String> users = FileHandler.readData(USER_FILE);
-        
-        // Hash the incoming plain-text password to compare with the stored hash
+        // Check lockout
+        Long until = lockedUntil.get(userId);
+        if (until != null) {
+            long remaining = (until - System.currentTimeMillis()) / 1000;
+            if (remaining > 0) {
+                return new String[]{"LOCKED", String.valueOf(remaining)};
+            }
+            // Lock expired — clear it
+            lockedUntil.remove(userId);
+            failures.remove(userId);
+        }
+
         String hashedInput = PasswordHasher.hashPassword(password);
+        ArrayList<String> users = FileHandler.readData(USER_FILE);
 
         for (String line : users) {
             String[] details = line.split("\\|");
-            // Check if ID and Hashed Password match
-            // details[0] = id, details[1] = hashed_password
-            if (details.length >= 6 && details[0].equals(userId) && details[1].equals(hashedInput)) {
-                return details; // Returns [id, pass_hash, name, role, email, contact]
+            if (details.length >= 6
+                    && details[0].equals(userId)
+                    && details[1].equals(hashedInput)) {
+                // Success — clear failure tracking
+                failures.remove(userId);
+                lockedUntil.remove(userId);
+                return details;
             }
         }
-        return null; // Login failed
+
+        // Failed attempt
+        int count = failures.getOrDefault(userId, 0) + 1;
+        if (count >= MAX_ATTEMPTS) {
+            lockedUntil.put(userId, System.currentTimeMillis() + LOCK_MS);
+            failures.remove(userId);
+        } else {
+            failures.put(userId, count);
+        }
+        return null;
     }
 }

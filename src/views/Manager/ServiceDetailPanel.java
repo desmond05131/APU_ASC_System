@@ -56,11 +56,11 @@ public class ServiceDetailPanel extends JPanel {
         form.add(label("Category :"), g);
 
         g.gridx = 3; g.weightx = 0.4;
-        cbCategory = new JComboBox<>(new String[]{"Wash", "Repair", "Maintenance"});
+        cbCategory = new JComboBox<>(new String[]{"Normal", "Major"});
         cbCategory.setFont(new Font("SansSerif", Font.PLAIN, 13));
         form.add(cbCategory, g);
 
-        // Row 1: Service Name (left)
+        // Row 1: Service Name (left) | Category note (right, below combo)
         g.gridy = 1;
         g.gridx = 0; g.weightx = 0;
         form.add(label("Service Name :"), g);
@@ -69,6 +69,13 @@ public class ServiceDetailPanel extends JPanel {
         txtName = new JTextField(20);
         txtName.setFont(new Font("SansSerif", Font.PLAIN, 13));
         form.add(txtName, g);
+
+        g.gridx = 3; g.weightx = 0.4; g.insets = new Insets(0, 14, 10, 14);
+        JLabel noteLabel = new JLabel("Normal = 1 hour service.  Major = 3 hour service.");
+        noteLabel.setFont(new Font("SansSerif", Font.ITALIC, 11));
+        noteLabel.setForeground(new Color(100, 110, 130));
+        form.add(noteLabel, g);
+        g.insets = new Insets(10, 14, 10, 14);
 
         // Row 2: Price (left)
         g.gridy = 2;

@@ -14,9 +14,14 @@ public class AddFeedbackPanel extends JPanel {
 
     private final CustomerDashboard dashboard;
     private JComboBox<String> cmbAppointment;
+    private JComboBox<String> cmbSubject;
     private JComboBox<String> ratingBox;
     private JTextArea txtComment;
     private final ArrayList<String> apptIds = new ArrayList<>();
+
+    // Maps UI subject label → category value stored in feedback.txt
+    private static final String[] SUBJECT_LABELS    = {"Counter Staff", "Technician", "Service Overall"};
+    private static final String[] SUBJECT_CATEGORIES = {"Customer-CounterStaff", "Customer-Technician", "Customer-Overall"};
 
     public AddFeedbackPanel(CustomerDashboard dashboard) {
         this.dashboard = dashboard;
@@ -29,13 +34,17 @@ public class AddFeedbackPanel extends JPanel {
         header.setPreferredSize(new Dimension(0, 50));
         add(header, BorderLayout.NORTH);
 
-        JPanel form = new JPanel(new GridLayout(3, 2, 10, 10));
+        JPanel form = new JPanel(new GridLayout(4, 2, 10, 10));
         form.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
         form.setBackground(Color.WHITE);
 
         form.add(new JLabel("Appointment:"));
         cmbAppointment = new JComboBox<>();
         form.add(cmbAppointment);
+
+        form.add(new JLabel("Feedback Subject:"));
+        cmbSubject = new JComboBox<>(SUBJECT_LABELS);
+        form.add(cmbSubject);
 
         form.add(new JLabel("Rating:"));
         ratingBox = new JComboBox<>(new String[]{"1", "2", "3", "4", "5"});
@@ -60,7 +69,7 @@ public class AddFeedbackPanel extends JPanel {
         add(btnPanel, BorderLayout.SOUTH);
     }
 
-    // Called by CustomerDashboard.switchContent("ADD_FEEDBACK") to refresh the list
+    /** Refreshed by CustomerDashboard.switchContent("ADD_FEEDBACK"). */
     public void loadCompletedAppointments() {
         cmbAppointment.removeAllItems();
         apptIds.clear();
@@ -100,7 +109,6 @@ public class AddFeedbackPanel extends JPanel {
             }
         }
 
-        // Max-ID scan avoids collisions with soft-deleted entries
         int max = 0;
         for (String line : FileHandler.readData("feedback.txt")) {
             if (line.trim().isEmpty()) continue;
@@ -112,13 +120,15 @@ public class AddFeedbackPanel extends JPanel {
         }
         String newId = String.format("F%03d", max + 1);
 
-        int rating = Integer.parseInt((String) ratingBox.getSelectedItem());
+        int    rating       = Integer.parseInt((String) ratingBox.getSelectedItem());
+        String customerId   = dashboard.getMainFrame().getCurrentUser().getId();
         String customerName = dashboard.getMainFrame().getCurrentUser().getName();
-        String date = LocalDate.now().toString();
+        String date         = LocalDate.now().toString();
+        String category     = SUBJECT_CATEGORIES[cmbSubject.getSelectedIndex()];
 
-        Feedback fb = new Feedback(newId, rating, customerName, comment, date);
+        Feedback fb = new Feedback(newId, customerId, rating, customerName, comment, date);
         fb.setServiceName(serviceName);
-        fb.setCategory("Customer");
+        fb.setCategory(category);
         FileHandler.writeData("feedback.txt", fb.toString());
 
         JOptionPane.showMessageDialog(this, "Feedback submitted!");

@@ -111,6 +111,14 @@ public class LoginPanel extends JPanel {
 
         String[] userData = AuthController.login(id, pass);
 
+        // Locked-out sentinel: {"LOCKED", secondsRemaining}
+        if (userData != null && "LOCKED".equals(userData[0])) {
+            JOptionPane.showMessageDialog(this,
+                    "Account locked. Try again in " + userData[1] + " seconds.",
+                    "Login Failed", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         if (userData != null && userData.length >= 6) {
             // Reject soft-deleted accounts
             if (userData.length >= 7 && "DELETED".equals(userData[6])) {

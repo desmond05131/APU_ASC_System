@@ -32,7 +32,9 @@ public class Appointment implements Storable {
     public String getServiceType() { return serviceType; }
     public String getScheduledDate() { return scheduledDate; }
     public double getTotalAmount() { return totalAmount; }
-    public String getCustomerId() { return customerId; }
+    public String getCustomerId()    { return customerId; }
+    public String getTechnicianId()  { return technicianId; }
+    public String getStaffId()       { return staffId; }
 
     @Override
     public String toFileFormat() {

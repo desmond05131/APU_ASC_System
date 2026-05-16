@@ -66,7 +66,7 @@ public class ManageServicePanel extends JPanel {
         g.gridx = 2; g.weightx = 0;     box.add(searchIconButton(), g);
         g.gridx = 3; g.weightx = 0;     box.add(label("Category :"), g);
         g.gridx = 4; g.weightx = 0.25;
-        catFilter = new JComboBox<>(new String[]{"All", "Wash", "Repair", "Maintenance"});
+        catFilter = new JComboBox<>(new String[]{"All", "Normal", "Major"});
         catFilter.setFont(new Font("SansSerif", Font.PLAIN, 13));
         box.add(catFilter, g);
 

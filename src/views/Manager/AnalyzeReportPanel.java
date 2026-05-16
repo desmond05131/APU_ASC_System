@@ -65,7 +65,7 @@ public class AnalyzeReportPanel extends JPanel {
         g.gridx = 1; g.weightx = 0.22;  txtTechnician = field(""); box.add(txtTechnician, g);
         g.gridx = 2; g.weightx = 0;     box.add(label("Category :"), g);
         g.gridx = 3; g.weightx = 0.22;
-        cmbCategory = new JComboBox<>(new String[]{"All", "Wash", "Repair", "Check", "Change"});
+        cmbCategory = new JComboBox<>(new String[]{"All", "Normal", "Major"});
         cmbCategory.setFont(new Font("SansSerif", Font.PLAIN, 13));
         box.add(cmbCategory, g);
 
@@ -136,9 +136,12 @@ public class AnalyzeReportPanel extends JPanel {
     private JPanel buildFooter() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
-        JButton btnExport = styledButton("Export to Text", new Color(100, 100, 248));
-        btnExport.addActionListener(e -> exportReport());
-        row.add(btnExport);
+        JButton btnExportCsv  = styledButton("Export to CSV",  new Color(100, 100, 248));
+        JButton btnExportText = styledButton("Export to Text", new Color(100, 100, 248));
+        btnExportCsv .addActionListener(e -> exportReportCsv());
+        btnExportText.addActionListener(e -> exportReport());
+        row.add(btnExportCsv);
+        row.add(btnExportText);
         return row;
     }
 
@@ -177,6 +180,25 @@ public class AnalyzeReportPanel extends JPanel {
             controller.exportToFile(text);
             JOptionPane.showMessageDialog(this,
                     "Report exported successfully to data/report_*.txt",
+                    "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Export failed: " + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void exportReportCsv() {
+        String start = txtStart      != null ? txtStart.getText().trim()      : "";
+        String end   = txtEnd        != null ? txtEnd.getText().trim()        : "";
+        String svc   = txtService    != null ? txtService.getText().trim()    : "";
+        String tech  = txtTechnician != null ? txtTechnician.getText().trim() : "";
+        String cat   = cmbCategory   != null ? (String) cmbCategory.getSelectedItem() : "All";
+        try {
+            String csv = controller.buildReportCsv(start, end, svc, tech, cat);
+            controller.exportToCsvFile(csv);
+            JOptionPane.showMessageDialog(this,
+                    "CSV exported successfully to data/report_*.csv",
                     "Export Complete", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(this,
