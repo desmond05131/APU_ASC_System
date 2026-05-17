@@ -8,29 +8,47 @@ import models.Payment;
 public class ReceiptService {
     private static final String RECEIPT_DIR = "data/receipts/";
 
-    /**
-     * Generates a formatted text-based receipt saved as a .txt file.
-     * To generate a true PDF, you would include the 'iText' library in your /lib folder.
-     */
-    public static void generateAutomatedReceipt(Payment payment) {
+    /** Single source of truth for receipt text layout. */
+    public static String formatReceiptText(String payId, String apptId,
+                                           String customerName, String serviceName,
+                                           double amount, String datePaid) {
+        return String.format(
+            "========================================%n"
+          + "    APU AUTOMOTIVE SERVICE CENTRE       %n"
+          + "========================================%n"
+          + "Receipt ID  : %s%n"
+          + "Appointment : %s%n"
+          + "Customer    : %s%n"
+          + "Service     : %s%n"
+          + "----------------------------------------%n"
+          + "Total Amount: RM %.2f%n"
+          + "Date Paid   : %s%n"
+          + "----------------------------------------%n"
+          + "Status      : PAID - THANK YOU!         %n"
+          + "========================================%n",
+            payId, apptId,
+            customerName.isEmpty() ? "(unknown)" : customerName,
+            serviceName.isEmpty()  ? "(unknown)" : serviceName,
+            amount, datePaid);
+    }
+
+    /** Generates a receipt file with customer name and service name included. */
+    public static void generateAutomatedReceipt(Payment payment,
+                                                String customerName,
+                                                String serviceName) {
         String fileName = RECEIPT_DIR + "Receipt_" + payment.getPaymentId() + ".txt";
-        
+        String text = formatReceiptText(payment.getPaymentId(), payment.getAppointmentId(),
+                customerName, serviceName, payment.getAmount(), payment.getPaymentDate());
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            writer.write("========================================"); writer.newLine();
-            writer.write("       APU AUTOMOTIVE SERVICE CENTRE    "); writer.newLine();
-            writer.write("========================================"); writer.newLine();
-            writer.write("Receipt ID:    " + payment.getPaymentId()); writer.newLine();
-            writer.write("Appointment:   " + payment.getAppointmentId()); writer.newLine();
-            writer.write("Date:          " + payment.getPaymentDate()); writer.newLine();
-            writer.write("----------------------------------------"); writer.newLine();
-            writer.write("Total Amount:  RM " + String.format("%.2f", payment.getAmount())); writer.newLine();
-            writer.write("----------------------------------------"); writer.newLine();
-            writer.write("Status:        PAID - THANK YOU!"); writer.newLine();
-            writer.write("========================================"); writer.newLine();
-            
+            writer.write(text);
             System.out.println("Receipt generated: " + fileName);
         } catch (IOException e) {
             System.err.println("Failed to generate receipt: " + e.getMessage());
         }
+    }
+
+    /** Backward-compatible overload — uses customer ID as customer name placeholder. */
+    public static void generateAutomatedReceipt(Payment payment) {
+        generateAutomatedReceipt(payment, payment.getPaymentId(), "");
     }
 }

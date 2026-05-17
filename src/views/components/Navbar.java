@@ -81,8 +81,12 @@ public class Navbar extends JPanel {
                 addNavButton(panel, dashboard, "My Appointments",  "staff.png",    "staff.png",             "APPOINTMENTS");
                 addNavButton(panel, dashboard, "Provide Feedback", "feedback.png", "feedback_on_click.png", "FEEDBACK");
             }
-            // Future roles — add cases here as each dashboard is implemented:
-            // case "CounterStaff" -> { ... }
+            case "CounterStaff" -> {
+                addNavButton(panel, dashboard, "My Profile",   "profile.png",  "profile_on_click.png", "PROFILE");
+                addNavButton(panel, dashboard, "Customers",    "staff.png",    "staff.png",            "MANAGE_CUSTOMERS");
+                addNavButton(panel, dashboard, "Appointments", "history.png",  "history_on_click.png", "MANAGE_APPOINTMENTS");
+                addNavButton(panel, dashboard, "Payment",      "service.png",  "service.png",          "PAYMENT");
+            }
         }
         if (!buttons.isEmpty()) buttons.get(0).setActive(true);
     }

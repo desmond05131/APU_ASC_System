@@ -12,6 +12,9 @@ public class Customer extends User {
 
     @Override
     public String toString() {
-        return getId() + "|" + getPassword() + "|" + getName() + "|Customer";
+        return String.join("|",
+            getId(), getPassword(), getName(), "Customer",
+            getEmail(), getContactNumber(),
+            isDeleted() ? "DELETED" : "ACTIVE");
     }
 }
