@@ -29,7 +29,7 @@ public class ServiceDetailPanel extends JPanel {
         if (currentService != null) populateFields();
     }
 
-    // ------------------------------------------------------------------ Form
+    // Form
     private JPanel buildForm() {
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
@@ -87,7 +87,7 @@ public class ServiceDetailPanel extends JPanel {
         txtPrice.setFont(new Font("SansSerif", Font.PLAIN, 13));
         form.add(txtPrice, g);
 
-        // Row 3: Description (left, tall — spans 3 rows)
+        // Row 3: Description (left, tall - spans 3 rows)
         g.gridy = 3;
         g.gridx = 0; g.weightx = 0; g.anchor = GridBagConstraints.NORTHWEST;
         form.add(label("Description :"), g);
@@ -107,7 +107,7 @@ public class ServiceDetailPanel extends JPanel {
         return form;
     }
 
-    // ------------------------------------------------------------------ Footer
+    // Footer
     private JPanel buildFooter() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -123,7 +123,7 @@ public class ServiceDetailPanel extends JPanel {
         return row;
     }
 
-    // ------------------------------------------------------------------ Logic
+    // Logic
     private void populateFields() {
         txtName.setText(currentService.getName());
         txtPrice.setText(String.format("%.2f", currentService.getPrice()));
@@ -158,7 +158,7 @@ public class ServiceDetailPanel extends JPanel {
         parent.showServiceManagement();
     }
 
-    // ------------------------------------------------------------------ Helpers
+    // Helpers
     private JLabel label(String text) {
         JLabel l = new JLabel(text);
         l.setFont(new Font("SansSerif", Font.PLAIN, 13));

@@ -30,7 +30,7 @@ public class ManageCustomerPanel extends JPanel {
         refreshTable();
     }
 
-    // ------------------------------------------------------------------ Filter
+    // Filter
     private JPanel buildFilterSection() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 4));
         wrapper.setOpaque(false);
@@ -48,7 +48,7 @@ public class ManageCustomerPanel extends JPanel {
         g.insets = new Insets(10, 14, 10, 14);
         g.fill   = GridBagConstraints.HORIZONTAL;
 
-        // Row 0 — Customer Name
+        // Row 0 - Customer Name
         g.gridx = 0; g.gridy = 0; g.weightx = 0;
         box.add(label("Customer Name :"), g);
         g.gridx = 1; g.weightx = 0.35;
@@ -57,7 +57,7 @@ public class ManageCustomerPanel extends JPanel {
         g.gridx = 2; g.weightx = 0;
         box.add(searchIconButton(), g);
 
-        // Row 1 — Customer ID
+        // Row 1 - Customer ID
         g.gridx = 0; g.gridy = 1; g.weightx = 0;
         box.add(label("Customer ID :"), g);
         g.gridx = 1; g.weightx = 0.35;
@@ -66,7 +66,7 @@ public class ManageCustomerPanel extends JPanel {
         g.gridx = 2; g.weightx = 0;
         box.add(searchIconButton(), g);
 
-        // Row 2 — Refresh + Show deleted
+        // Row 2 - Refresh + Show deleted
         g.gridx = 0; g.gridy = 2; g.weightx = 0; g.fill = GridBagConstraints.NONE;
         JButton refresh = styledButton("Refresh", new Color(100, 100, 248));
         refresh.addActionListener(e -> refreshTable());
@@ -108,7 +108,7 @@ public class ManageCustomerPanel extends JPanel {
         return l;
     }
 
-    // ------------------------------------------------------------------ Table
+    // Table
     private JScrollPane buildTable() {
         String[] cols = {"User ID", "Name", "Email", "Contact Number", "Password"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -150,7 +150,7 @@ public class ManageCustomerPanel extends JPanel {
         return new JScrollPane(customerTable);
     }
 
-    // ------------------------------------------------------------------ Buttons
+    // Buttons
     private JPanel buildButtonRow() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -210,7 +210,7 @@ public class ManageCustomerPanel extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Helpers
+    // Helpers
     private Customer getSelectedCustomer() {
         int row = customerTable.getSelectedRow();
         if (row == -1) return null;

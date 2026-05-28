@@ -35,7 +35,7 @@ public class ManageStaffPanel extends JPanel {
         refreshTable();
     }
 
-    // ------------------------------------------------------------------ Filter
+    // Filter
     private JPanel buildFilterSection() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 4));
         wrapper.setOpaque(false);
@@ -53,7 +53,7 @@ public class ManageStaffPanel extends JPanel {
         g.insets = new Insets(10, 14, 10, 14);
         g.fill   = GridBagConstraints.HORIZONTAL;
 
-        // Row 0 — Staff Name | Role
+        // Row 0 - Staff Name | Role
         g.gridx = 0; g.gridy = 0; g.weightx = 0;
         box.add(label("Staff Name :"), g);
 
@@ -72,7 +72,7 @@ public class ManageStaffPanel extends JPanel {
         roleFilter.setFont(new Font("SansSerif", Font.PLAIN, 13));
         box.add(roleFilter, g);
 
-        // Row 1 — User ID
+        // Row 1 - User ID
         g.gridx = 0; g.gridy = 1; g.weightx = 0;
         box.add(label("User ID :"), g);
 
@@ -83,7 +83,7 @@ public class ManageStaffPanel extends JPanel {
         g.gridx = 2; g.weightx = 0;
         box.add(searchIconButton(), g);
 
-        // Row 2 — Refresh + Show deleted checkbox
+        // Row 2 - Refresh + Show deleted checkbox
         g.gridx = 0; g.gridy = 2; g.weightx = 0; g.fill = GridBagConstraints.NONE;
         JButton refresh = styledButton("Refresh", new Color(100, 100, 248));
         refresh.addActionListener(e -> refreshTable());
@@ -101,7 +101,7 @@ public class ManageStaffPanel extends JPanel {
         return wrapper;
     }
 
-    /** A small icon-only button that triggers the filter — same behaviour as Refresh. */
+    /** A small icon-only button that triggers the filter - same behaviour as Refresh. */
     private JButton searchIconButton() {
         JButton btn = new JButton("🔍");
         btn.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -126,7 +126,7 @@ public class ManageStaffPanel extends JPanel {
         return l;
     }
 
-    // ------------------------------------------------------------------ Table
+    // Table
     private JScrollPane buildTable() {
         String[] cols = {"User ID", "User Name", "Role", "Email", "Contact Number", "Password"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -170,7 +170,7 @@ public class ManageStaffPanel extends JPanel {
         return new JScrollPane(staffTable);
     }
 
-    // ------------------------------------------------------------------ Buttons
+    // Buttons
     private JPanel buildButtonRow() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -259,7 +259,7 @@ public class ManageStaffPanel extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Helpers
+    // Helpers
     private User getSelectedUser() {
         int row = staffTable.getSelectedRow();
         if (row == -1) return null;

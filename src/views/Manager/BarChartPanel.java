@@ -72,7 +72,7 @@ public class BarChartPanel extends JPanel {
             int    x    = mL + gap + i * (barW + gap);
             int    y    = mT + chartH - barH;
 
-            // Purple bar — rounded top only
+            // Purple bar - rounded top only
             g2.setColor(new Color(100, 100, 248));
             if (barH > 0) {
                 g2.fillRoundRect(x, y, barW, barH, 8, 8);

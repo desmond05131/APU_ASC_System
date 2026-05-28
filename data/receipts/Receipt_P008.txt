@@ -1,0 +1,13 @@
+========================================
+    APU AUTOMOTIVE SERVICE CENTRE       
+========================================
+Receipt ID  : P008
+Appointment : A005
+Customer    : Ali Hassan
+Service     : Brake Check
+----------------------------------------
+Total Amount: RM 68.00
+Date Paid   : 2026-05-17 15:23:35
+----------------------------------------
+Status      : PAID - THANK YOU!         
+========================================

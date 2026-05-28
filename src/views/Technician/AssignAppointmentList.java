@@ -27,7 +27,7 @@ public class AssignAppointmentList extends JPanel {
         refreshTable();
     }
 
-    // ------------------------------------------------------------------ Table
+    // Table
     private JScrollPane buildTable() {
         String[] cols = {"Appointment ID", "Service Type", "Status",
                          "Scheduled Date", "Total Amount (RM)", "Customer ID"};
@@ -45,7 +45,7 @@ public class AssignAppointmentList extends JPanel {
         return new JScrollPane(table);
     }
 
-    // ------------------------------------------------------------------ Buttons
+    // Buttons
     private JPanel buildButtonRow() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -76,7 +76,7 @@ public class AssignAppointmentList extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Logic
+    // Logic
     private void handleMarkCompleted() {
         int row = table.getSelectedRow();
         if (row == -1) {

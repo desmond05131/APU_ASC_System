@@ -9,20 +9,20 @@ public class PaymentController {
     private static final String PAYMENT_FILE = "payments.txt";
 
     /**
-     * Records a new payment and updates the corresponding appointment status to PAID. 
+     * Records a new payment and updates the corresponding appointment status to PAID.
      */
     public static void processPayment(String paymentId, String appointmentId, String customerId, double amount) {
         Payment newPayment = new Payment(paymentId, appointmentId, customerId, amount);
         
-        // 1. Save payment record to payments.txt [cite: 44]
+        // 1. Save payment record to payments.txt
         FileHandler.writeData(PAYMENT_FILE, newPayment.toFileFormat());
-        
-        // 2. Update the appointment status to PAID using the existing controller 
+
+        // 2. Update the appointment status to PAID using the existing controller
         AppointmentController.updateStatus(appointmentId, AppointmentStatus.PAID);
     }
 
     /**
-     * Formats a professional receipt string for the GUI display. [cite: 24, 62]
+     * Formats a professional receipt string for the GUI display.
      */
     public static String generateReceipt(String paymentId) {
         ArrayList<String> lines = FileHandler.readData(PAYMENT_FILE);

@@ -1,6 +1,7 @@
 package services;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import models.Payment;
@@ -36,6 +37,7 @@ public class ReceiptService {
     public static void generateAutomatedReceipt(Payment payment,
                                                 String customerName,
                                                 String serviceName) {
+        new File(RECEIPT_DIR).mkdirs();
         String fileName = RECEIPT_DIR + "Receipt_" + payment.getPaymentId() + ".txt";
         String text = formatReceiptText(payment.getPaymentId(), payment.getAppointmentId(),
                 customerName, serviceName, payment.getAmount(), payment.getPaymentDate());
@@ -47,7 +49,7 @@ public class ReceiptService {
         }
     }
 
-    /** Backward-compatible overload — uses customer ID as customer name placeholder. */
+    /** Backward-compatible overload - uses customer ID as customer name placeholder. */
     public static void generateAutomatedReceipt(Payment payment) {
         generateAutomatedReceipt(payment, payment.getPaymentId(), "");
     }

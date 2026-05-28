@@ -17,7 +17,7 @@ import services.FileHandler;
 import services.ReceiptService;
 
 /**
- * PaymentAndReceiptPanel — Counter Staff view.
+ * PaymentAndReceiptPanel - Counter Staff view.
  * Collects payment for completed appointments, generates receipts,
  * and lets staff re-view any past receipt by clicking the history table.
  *
@@ -60,7 +60,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         refreshAll();
     }
 
-    // ── Left panel ───────────────────────────────────────────────────────────
+    // Left panel
 
     private JPanel buildLeftPanel() {
         JPanel left = new JPanel(new BorderLayout(0, 10));
@@ -105,7 +105,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         historyTable.setFont(new Font("SansSerif", Font.PLAIN, 13));
         historyTable.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13));
         historyTable.getTableHeader().setBackground(new Color(245, 247, 250));
-        // Step 8.5 — clicking a history row re-renders the receipt
+        // Clicking a history row re-renders the receipt
         historyTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) loadHistorySelection();
         });
@@ -123,7 +123,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         return left;
     }
 
-    // ── Right panel ──────────────────────────────────────────────────────────
+    // Right panel
 
     private JPanel buildRightPanel() {
         JPanel right = new JPanel(new BorderLayout(0, 10));
@@ -163,7 +163,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         return right;
     }
 
-    // ── Data population ──────────────────────────────────────────────────────
+    // Data population
 
     public void refreshAll() {
         loadPendingTable();
@@ -209,7 +209,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         }
     }
 
-    // ── Preview / confirm ────────────────────────────────────────────────────
+    // Preview / confirm
 
     private void previewSelected() {
         int row = pendingTable.getSelectedRow();
@@ -269,7 +269,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         dashboard.refreshAppointmentList();
     }
 
-    // ── History row selection (re-view past receipt) ──────────────────────────
+    // History row selection (re-view past receipt)
 
     private void loadHistorySelection() {
         int row = historyTable.getSelectedRow();
@@ -299,14 +299,14 @@ public class PaymentAndReceiptPanel extends JPanel {
         receiptArea.setText(buildReceiptText(payId, apptId, custName, service, amt, datePaid));
     }
 
-    // ── Receipt text (delegates to ReceiptService for single source of truth) ──
+    // Receipt text (delegates to ReceiptService for single source of truth)
 
     private String buildReceiptText(String payId, String apptId, String customer,
                                     String service, double amount, String date) {
         return ReceiptService.formatReceiptText(payId, apptId, customer, service, amount, date);
     }
 
-    // ── Utilities ────────────────────────────────────────────────────────────
+    // Utilities
 
     private String generatePaymentId() {
         int max = 0;
@@ -340,7 +340,7 @@ public class PaymentAndReceiptPanel extends JPanel {
         JOptionPane.showMessageDialog(this, "Receipt copied to clipboard!");
     }
 
-    // ── Layout helpers ────────────────────────────────────────────────────────
+    // Layout helpers
 
     private JLabel detailLabel() {
         JLabel l = new JLabel("—");

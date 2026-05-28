@@ -43,7 +43,7 @@ public class StaffDashboard extends JPanel implements Dashboard {
         cardLayout.show(contentArea, "MANAGE_APPOINTMENTS");
     }
 
-    // ── Dashboard interface ──────────────────────────────────────────────────
+    // Dashboard interface
 
     @Override
     public void switchContent(String viewName) {
@@ -55,7 +55,7 @@ public class StaffDashboard extends JPanel implements Dashboard {
         cardLayout.show(contentArea, viewName);
     }
 
-    // ── Cross-panel coordination ─────────────────────────────────────────────
+    // Cross-panel coordination
 
     /** Open the customer add/edit panel in the CardLayout area. */
     public void openCustomerDetail(Customer customer) {

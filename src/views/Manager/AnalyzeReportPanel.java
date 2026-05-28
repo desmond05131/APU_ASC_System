@@ -30,7 +30,7 @@ public class AnalyzeReportPanel extends JPanel {
         generateReport();
     }
 
-    // ----------------------------------------------------------------- Filter section
+    // Filter section
     private JPanel buildFilterSection() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 4));
         wrapper.setOpaque(false);
@@ -48,7 +48,7 @@ public class AnalyzeReportPanel extends JPanel {
         g.insets = new Insets(10, 14, 10, 14);
         g.fill   = GridBagConstraints.HORIZONTAL;
 
-        // Row 0 — Start Date | End Date | Service Name
+        // Row 0 - Start Date | End Date | Service Name
         g.gridy = 0;
 
         g.gridx = 0; g.weightx = 0;     box.add(label("Start Date :"), g);
@@ -58,7 +58,7 @@ public class AnalyzeReportPanel extends JPanel {
         g.gridx = 4; g.weightx = 0;     box.add(label("Service Name :"), g);
         g.gridx = 5; g.weightx = 0.22;  txtService = field("");          box.add(txtService, g);
 
-        // Row 1 — Technician | Category | Generate Report button
+        // Row 1 - Technician | Category | Generate Report button
         g.gridy = 1;
 
         g.gridx = 0; g.weightx = 0;     box.add(label("Technician :"), g);
@@ -80,7 +80,7 @@ public class AnalyzeReportPanel extends JPanel {
         return wrapper;
     }
 
-    // ----------------------------------------------------------------- Center (split)
+    // Center (split)
     private JSplitPane buildCenterSection() {
         JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
                 buildTablesPanel(), buildRightPanel());
@@ -90,7 +90,7 @@ public class AnalyzeReportPanel extends JPanel {
         return split;
     }
 
-    // Left pane — two stacked breakdown tables
+    // Left pane - two stacked breakdown tables
     private JPanel buildTablesPanel() {
         JPanel panel = new JPanel(new GridLayout(2, 1, 0, 12));
         panel.setOpaque(false);
@@ -108,7 +108,7 @@ public class AnalyzeReportPanel extends JPanel {
         return panel;
     }
 
-    // Right pane — stat cards + bar chart
+    // Right pane - stat cards + bar chart
     private JPanel buildRightPanel() {
         JPanel panel = new JPanel(new BorderLayout(0, 12));
         panel.setOpaque(false);
@@ -132,7 +132,7 @@ public class AnalyzeReportPanel extends JPanel {
         return panel;
     }
 
-    // ----------------------------------------------------------------- Footer
+    // Footer
     private JPanel buildFooter() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -145,7 +145,7 @@ public class AnalyzeReportPanel extends JPanel {
         return row;
     }
 
-    // ----------------------------------------------------------------- Logic
+    // Logic
     private void generateReport() {
         String start = txtStart      != null ? txtStart.getText().trim()      : "";
         String end   = txtEnd        != null ? txtEnd.getText().trim()        : "";
@@ -207,7 +207,7 @@ public class AnalyzeReportPanel extends JPanel {
         }
     }
 
-    // ----------------------------------------------------------------- Helpers
+    // Helpers
     private JLabel statCard(JPanel parent, String title, String initial) {
         JPanel card = new JPanel(new BorderLayout(0, 4));
         card.setBackground(new Color(245, 247, 250));

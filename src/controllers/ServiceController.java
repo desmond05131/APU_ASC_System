@@ -77,7 +77,7 @@ public class ServiceController {
         save();
     }
 
-    /** Soft delete — marks DELETED rather than removing from file. */
+    /** Soft delete - marks DELETED rather than removing from file. */
     public void deleteService(String id) {
         for (Service s : services) {
             if (s.getId().equals(id)) { s.setDeleted(true); break; }

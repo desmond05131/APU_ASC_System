@@ -20,7 +20,7 @@ import models.Service;
 import models.Technician;
 
 /**
- * ManageAppointmentPanel — Counter Staff view.
+ * ManageAppointmentPanel - Counter Staff view.
  * View / filter all appointments, book new ones (with real service catalogue
  * and date-level technician availability), and hand off to Payment panel.
  *
@@ -51,7 +51,7 @@ public class ManageAppointmentPanel extends JPanel {
         refreshTable();
     }
 
-    // ── Filter section ───────────────────────────────────────────────────────
+    // Filter section
 
     private JPanel buildFilterSection() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 4));
@@ -89,7 +89,7 @@ public class ManageAppointmentPanel extends JPanel {
         return wrapper;
     }
 
-    // ── Table ────────────────────────────────────────────────────────────────
+    // Table
 
     private JScrollPane buildTable() {
         tableModel = new DefaultTableModel(COLUMNS, 0) {
@@ -107,7 +107,7 @@ public class ManageAppointmentPanel extends JPanel {
         return new JScrollPane(apptTable);
     }
 
-    // ── Button row ───────────────────────────────────────────────────────────
+    // Button row
 
     private JPanel buildBottomPanel() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
@@ -123,7 +123,7 @@ public class ManageAppointmentPanel extends JPanel {
         return row;
     }
 
-    // ── Table data ───────────────────────────────────────────────────────────
+    // Table data
 
     public void refreshTable() {
         tableModel.setRowCount(0);
@@ -140,7 +140,7 @@ public class ManageAppointmentPanel extends JPanel {
         }
     }
 
-    // ── Collect Payment ──────────────────────────────────────────────────────
+    // Collect Payment
 
     private void onCollectPayment() {
         int row = apptTable.getSelectedRow();
@@ -155,7 +155,7 @@ public class ManageAppointmentPanel extends JPanel {
         dashboard.openPaymentForAppointment(tableModel.getValueAt(row, 0).toString());
     }
 
-    // ── New Appointment Dialog ────────────────────────────────────────────────
+    // New Appointment Dialog
 
     private void openNewAppointmentDialog() {
         JDialog dialog = new JDialog(
@@ -174,7 +174,7 @@ public class ManageAppointmentPanel extends JPanel {
         g.fill    = GridBagConstraints.HORIZONTAL;
         g.weightx = 1;
 
-        // ── Customer selector ────────────────────────────────────────────────
+        // Customer selector
         ArrayList<Customer> customers = CustomerController.getAllCustomers();
         String[] custItems = customers.stream()
                 .map(c -> c.getId() + " – " + c.getName())
@@ -182,7 +182,7 @@ public class ManageAppointmentPanel extends JPanel {
         JComboBox<String> cmbCustomer = new JComboBox<>(custItems);
         cmbCustomer.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
-        // ── Service selector (real catalogue) ────────────────────────────────
+        // Service selector (real catalogue)
         ArrayList<Service> services = new ServiceController().getAllServices();
         String[] svcItems = services.stream()
                 .map(s -> {
@@ -194,7 +194,7 @@ public class ManageAppointmentPanel extends JPanel {
         JComboBox<String> cmbService = new JComboBox<>(svcItems);
         cmbService.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
-        // ── Price (auto-filled from selected service) ─────────────────────────
+        // Price (auto-filled from selected service)
         JTextField fPrice = new JTextField("0.00", 10);
         fPrice.setEditable(false);
         fPrice.setBackground(new Color(245, 245, 245));
@@ -208,14 +208,14 @@ public class ManageAppointmentPanel extends JPanel {
         cmbService.addActionListener(e -> updatePrice.run());
         updatePrice.run();
 
-        // ── Date field (date-only yyyy-MM-dd) ─────────────────────────────────
+        // Date field (date-only yyyy-MM-dd)
         JTextField fDate = new JTextField(LocalDate.now().plusDays(1).toString(), 16);
         fDate.setFont(new Font("SansSerif", Font.PLAIN, 13));
         JLabel lblDateHint = new JLabel("Format: yyyy-MM-dd");
         lblDateHint.setForeground(Color.GRAY);
         lblDateHint.setFont(new Font("SansSerif", Font.ITALIC, 10));
 
-        // ── Technician selector (populated on demand) ─────────────────────────
+        // Technician selector (populated on demand)
         JComboBox<String> cmbTech = new JComboBox<>();
         cmbTech.setFont(new Font("SansSerif", Font.PLAIN, 13));
 
@@ -231,7 +231,7 @@ public class ManageAppointmentPanel extends JPanel {
             }
         });
 
-        // ── Layout rows ──────────────────────────────────────────────────────
+        // Layout rows
         addFormRow(form, g, 0, "Customer *",   cmbCustomer);
         addFormRow(form, g, 1, "Service *",    cmbService);
         addFormRow(form, g, 2, "Price (RM)",   fPrice);
@@ -242,7 +242,7 @@ public class ManageAppointmentPanel extends JPanel {
 
         dialog.add(form, BorderLayout.CENTER);
 
-        // ── Action buttons ───────────────────────────────────────────────────
+        // Action buttons
         JPanel btnRow = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         btnRow.setBackground(Color.WHITE);
         JButton btnBook   = styledBtn("Book Appointment", new Color(100, 100, 248));
@@ -288,7 +288,7 @@ public class ManageAppointmentPanel extends JPanel {
         dialog.setVisible(true);
     }
 
-    // ── Availability (date-level blocking) ───────────────────────────────────
+    // Availability (date-level blocking)
 
     /**
      * A technician is unavailable on a date if they have any non-PAID appointment
@@ -315,7 +315,7 @@ public class ManageAppointmentPanel extends JPanel {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    // ── ID generation ────────────────────────────────────────────────────────
+    // ID generation
 
     private String generateAppointmentId() {
         int max = 0;
@@ -328,7 +328,7 @@ public class ManageAppointmentPanel extends JPanel {
         return String.format("A%03d", max + 1);
     }
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
+    // Helpers
 
     private boolean isValidDate(String s) {
         try { LocalDate.parse(s); return true; }

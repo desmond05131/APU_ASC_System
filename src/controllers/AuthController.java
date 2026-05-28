@@ -26,7 +26,7 @@ public class AuthController {
             if (remaining > 0) {
                 return new String[]{"LOCKED", String.valueOf(remaining)};
             }
-            // Lock expired — clear it
+            // Lock expired - clear it
             lockedUntil.remove(userId);
             failures.remove(userId);
         }
@@ -39,7 +39,7 @@ public class AuthController {
             if (details.length >= 6
                     && details[0].equals(userId)
                     && details[1].equals(hashedInput)) {
-                // Success — clear failure tracking
+                // Success - clear failure tracking
                 failures.remove(userId);
                 lockedUntil.remove(userId);
                 return details;

@@ -16,7 +16,7 @@ public class Payment implements Storable {
         this.appointmentId = appointmentId;
         this.customerId = customerId;
         this.amount = amount;
-        // Automatically set the current time for the receipt [cite: 24]
+        // Automatically set the current time for the receipt
         this.paymentDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 

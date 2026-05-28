@@ -31,7 +31,7 @@ public class ReviewFeedbackPanel extends JPanel {
         refreshTable();
     }
 
-    // ------------------------------------------------------------------ Filter
+    // Filter
     private JPanel buildFilterSection() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 4));
         wrapper.setOpaque(false);
@@ -49,7 +49,7 @@ public class ReviewFeedbackPanel extends JPanel {
         g.insets = new Insets(10, 14, 10, 14);
         g.fill   = GridBagConstraints.HORIZONTAL;
 
-        // Row 0 — Service Name | Filter by Rating | Category
+        // Row 0 - Service Name | Filter by Rating | Category
         g.gridy = 0;
         g.gridx = 0; g.weightx = 0;    box.add(label("Service Name :"), g);
         g.gridx = 1; g.weightx = 0.28; txtServiceSearch = searchField(); box.add(txtServiceSearch, g);
@@ -65,14 +65,14 @@ public class ReviewFeedbackPanel extends JPanel {
         cmbCategory.setFont(new Font("SansSerif", Font.PLAIN, 13));
         box.add(cmbCategory, g);
 
-        // Row 1 — Customer Name | Date
+        // Row 1 - Customer Name | Date
         g.gridy = 1;
         g.gridx = 0; g.weightx = 0;    box.add(label("Customer Name :"), g);
         g.gridx = 1; g.weightx = 0.28; txtCustomerSearch = searchField(); box.add(txtCustomerSearch, g);
         g.gridx = 2; g.weightx = 0;    box.add(label("Date :"), g);
         g.gridx = 3; g.weightx = 0.16; txtDateSearch = searchField(); box.add(txtDateSearch, g);
 
-        // Row 2 — Refresh | Clear | Show deleted checkbox
+        // Row 2 - Refresh | Clear | Show deleted checkbox
         g.gridy = 2; g.gridx = 0; g.weightx = 0; g.fill = GridBagConstraints.NONE;
         JButton refresh = styledButton("Refresh", new Color(100, 100, 248));
         refresh.addActionListener(e -> refreshTable());
@@ -107,7 +107,7 @@ public class ReviewFeedbackPanel extends JPanel {
         return l;
     }
 
-    // ------------------------------------------------------------------ Table
+    // Table
     private JScrollPane buildTable() {
         String[] cols = {"Feedback ID", "Customer Name", "Service Name", "Category", "Rating", "Comment", "Date"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -148,7 +148,7 @@ public class ReviewFeedbackPanel extends JPanel {
         return new JScrollPane(feedbackTable);
     }
 
-    // ------------------------------------------------------------------ Footer
+    // Footer
     private JPanel buildFooter() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -171,7 +171,7 @@ public class ReviewFeedbackPanel extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Logic
+    // Logic
     private void handleDelete() {
         int row = feedbackTable.getSelectedRow();
         if (row == -1) { JOptionPane.showMessageDialog(this, "Please select a feedback entry to delete."); return; }

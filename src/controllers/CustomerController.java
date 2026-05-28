@@ -52,7 +52,7 @@ public class CustomerController {
         return false;
     }
 
-    /** Soft delete — sets status to DELETED. */
+    /** Soft delete - sets status to DELETED. */
     public static boolean deleteCustomer(String id) {
         var allLines = FileHandler.readData(USER_FILE);
         for (int i = 0; i < allLines.size(); i++) {

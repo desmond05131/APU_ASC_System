@@ -126,7 +126,7 @@ public final class FeedbackPanel extends JPanel {
                 } catch (NumberFormatException ignored) {}
             } else {
                 // Legacy format: feedbackId|rating|customerName|comment|date|...|status
-                // No customerId — can only show; skip so we don't show other people's data
+                // No customerId - can only show; skip so we don't show other people's data
                 // (After full migration this branch is unreachable)
             }
         }

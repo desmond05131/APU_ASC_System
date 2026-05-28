@@ -4,7 +4,7 @@ public class Service {
     private final String id;
     private String name;
     private String category;
-    private String description; // Added new field
+    private String description;
     private double price;
     private boolean deleted = false;
 
@@ -31,7 +31,6 @@ public class Service {
 
     @Override
     public String toString() {
-        // Updated to include description
         return String.join("|", id, name, category, description, String.valueOf(price));
     }
 }

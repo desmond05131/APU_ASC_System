@@ -33,7 +33,7 @@ public class ManageServicePanel extends JPanel {
         refreshTable();
     }
 
-    // ------------------------------------------------------------------ Filter
+    // Filter
     private JPanel buildFilterSection() {
         JPanel wrapper = new JPanel(new BorderLayout(0, 4));
         wrapper.setOpaque(false);
@@ -51,7 +51,7 @@ public class ManageServicePanel extends JPanel {
         g.insets = new Insets(10, 14, 10, 14);
         g.fill   = GridBagConstraints.HORIZONTAL;
 
-        // Row 0 — Service Name | Price
+        // Row 0 - Service Name | Price
         g.gridy = 0;
         g.gridx = 0; g.weightx = 0;     box.add(label("Service Name :"), g);
         g.gridx = 1; g.weightx = 0.35;  txtNameSearch = searchField(); box.add(txtNameSearch, g);
@@ -59,7 +59,7 @@ public class ManageServicePanel extends JPanel {
         g.gridx = 3; g.weightx = 0;     box.add(label("Price :"), g);
         g.gridx = 4; g.weightx = 0.25;  txtPriceSearch = searchField(); box.add(txtPriceSearch, g);
 
-        // Row 1 — Service ID | Category
+        // Row 1 - Service ID | Category
         g.gridy = 1;
         g.gridx = 0; g.weightx = 0;     box.add(label("Service ID :"), g);
         g.gridx = 1; g.weightx = 0.35;  txtIdSearch = searchField(); box.add(txtIdSearch, g);
@@ -70,7 +70,7 @@ public class ManageServicePanel extends JPanel {
         catFilter.setFont(new Font("SansSerif", Font.PLAIN, 13));
         box.add(catFilter, g);
 
-        // Row 2 — Refresh + Show deleted checkbox
+        // Row 2 - Refresh + Show deleted checkbox
         g.gridy = 2; g.gridx = 0; g.weightx = 0; g.fill = GridBagConstraints.NONE;
         JButton refresh = styledButton("Refresh", new Color(100, 100, 248));
         refresh.addActionListener(e -> refreshTable());
@@ -112,7 +112,7 @@ public class ManageServicePanel extends JPanel {
         return l;
     }
 
-    // ------------------------------------------------------------------ Table
+    // Table
     private JScrollPane buildTable() {
         String[] cols = {"Service ID", "Service Name", "Category", "Description", "Price"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -153,7 +153,7 @@ public class ManageServicePanel extends JPanel {
         return new JScrollPane(serviceTable);
     }
 
-    // ------------------------------------------------------------------ Buttons
+    // Buttons
     private JPanel buildButtonRow() {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 4));
         row.setOpaque(false);
@@ -215,7 +215,7 @@ public class ManageServicePanel extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Helpers
+    // Helpers
     private Service getSelectedService() {
         int row = serviceTable.getSelectedRow();
         if (row == -1) return null;

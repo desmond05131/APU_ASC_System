@@ -10,7 +10,7 @@ import services.FileHandler;
 
 public class ReportController {
 
-    // ---------------------------------------------------------------- Summary
+    // Summary
     public Map<String, Double> getSummaryStats(String start, String end) {
         return getSummaryStats(start, end, "", "", "All");
     }
@@ -51,7 +51,7 @@ public class ReportController {
         return stats;
     }
 
-    // ---------------------------------------------------------------- Monthly Revenue (bar chart)
+    // Monthly Revenue (bar chart)
     public Map<String, Double> getMonthlyRevenue() {
         String[] months = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
         Map<String, Double> monthly = new LinkedHashMap<>();
@@ -74,7 +74,7 @@ public class ReportController {
         return withData.isEmpty() ? monthly : withData;
     }
 
-    // ---------------------------------------------------------------- Service Breakdown
+    // Service Breakdown
     public List<String[]> getServiceBreakdown(String start, String end,
                                               String svcFilter, String techFilter, String catFilter) {
         Map<String, double[]> map = new LinkedHashMap<>();
@@ -102,7 +102,7 @@ public class ReportController {
         return result;
     }
 
-    // ---------------------------------------------------------------- Technician Breakdown
+    // Technician Breakdown
     public List<String[]> getTechnicianBreakdown(String start, String end,
                                                  String svcFilter, String techFilter, String catFilter) {
         Map<String, String>   names = loadTechnicianNames();
@@ -134,7 +134,7 @@ public class ReportController {
         return result;
     }
 
-    // ---------------------------------------------------------------- Average Rating
+    // Average Rating
     public double getAverageRating() {
         double sum = 0; int count = 0;
         for (String line : FileHandler.readData("feedback.txt")) {
@@ -154,7 +154,7 @@ public class ReportController {
         return count == 0 ? 0.0 : sum / count;
     }
 
-    // ---------------------------------------------------------------- Text Export
+    // Text Export
     public String buildReportText(String start, String end,
                                   String svcFilter, String techFilter, String catFilter) {
         Map<String, Double> stats  = getSummaryStats(start, end, svcFilter, techFilter, catFilter);
@@ -198,7 +198,7 @@ public class ReportController {
         }
     }
 
-    // ---------------------------------------------------------------- CSV Export
+    // CSV Export
     public String buildReportCsv(String start, String end,
                                  String svcFilter, String techFilter, String catFilter) {
         Map<String, Double> stats  = getSummaryStats(start, end, svcFilter, techFilter, catFilter);
@@ -243,7 +243,7 @@ public class ReportController {
         }
     }
 
-    // ---------------------------------------------------------------- Helpers
+    // Helpers
     private boolean matches(String value, String filter) {
         return filter == null || filter.isEmpty()
                 || value.toLowerCase().contains(filter.toLowerCase());
@@ -264,7 +264,7 @@ public class ReportController {
                 return p[2].equalsIgnoreCase(cat);
             }
         }
-        // Service not in catalogue — fall back to name contains-match
+        // Service not in catalogue - fall back to name contains-match
         return serviceType.toLowerCase().contains(cat.toLowerCase());
     }
 

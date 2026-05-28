@@ -99,7 +99,7 @@ public class StaffController {
         return false;
     }
 
-    /** Soft delete — marks the user DELETED without removing the record. */
+    /** Soft delete - marks the user DELETED without removing the record. */
     public boolean deleteStaff(String id) {
         loadUsers();
         for (User u : allUsers) {

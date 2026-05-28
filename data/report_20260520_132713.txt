@@ -1,0 +1,28 @@
+============================================================
+     APU AUTOMOTIVE SERVICE CENTRE - PERFORMANCE REPORT
+============================================================
+Period    : All  to  All
+Generated : 2026-05-20 13:27:13
+
+--- SUMMARY ---
+Total Appointments : 7
+Completed          : 5
+Cancelled          : 0
+Total Revenue      : RM 846.00
+Average Rating     : 4.3 / 5.0
+
+--- SERVICE BREAKDOWN ---
+Service                       Revenue    Count
+-----------------------------------------------
+Full Car Wash               RM 250.00        2
+Engine Repair               RM 200.00        1
+Oil Change                   RM 80.00        1
+Brake Check                  RM 68.00        1
+
+--- TECHNICIAN BREAKDOWN ---
+Technician                    Revenue    Count
+-----------------------------------------------
+Ahmad Rashid                RM 248.00        3
+T102                        RM 350.00        2
+
+============================================================

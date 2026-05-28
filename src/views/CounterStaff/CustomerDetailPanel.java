@@ -33,7 +33,7 @@ public class CustomerDetailPanel extends JPanel {
         txtPhone.setText(isAdd ? "" : customer.getContactNumber());
     }
 
-    // ------------------------------------------------------------------ Form
+    // Form
     private JPanel buildForm() {
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
@@ -103,7 +103,7 @@ public class CustomerDetailPanel extends JPanel {
         return f;
     }
 
-    // ------------------------------------------------------------------ Footer
+    // Footer
     private JPanel buildFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 18));
         footer.setBackground(Color.WHITE);
@@ -131,7 +131,7 @@ public class CustomerDetailPanel extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Logic
+    // Logic
     private void handleSave() {
         String name    = txtName.getText().trim();
         String email   = txtEmail.getText().trim();

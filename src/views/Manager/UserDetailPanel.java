@@ -26,7 +26,7 @@ public class UserDetailPanel extends JPanel {
         add(buildFooter(), BorderLayout.SOUTH);
     }
 
-    // ------------------------------------------------------------------ Form
+    // Form
     private JPanel buildForm() {
         JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(Color.WHITE);
@@ -59,7 +59,7 @@ public class UserDetailPanel extends JPanel {
         addLeftRow(form, g, "Password:",          txtPass,        4);
         addLeftRow(form, g, "Confirm Password:",  txtConfirmPass, 5);
 
-        // ---- Right column — Role ----
+        // Right column - Role
         g.gridx = 2; g.gridy = 0; g.weightx = 0;
         g.fill = GridBagConstraints.NONE; g.anchor = GridBagConstraints.EAST;
         JLabel roleLabel = new JLabel("Role:");
@@ -105,7 +105,7 @@ public class UserDetailPanel extends JPanel {
         return f;
     }
 
-    // ------------------------------------------------------------------ Footer
+    // Footer
     private JPanel buildFooter() {
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT, 16, 18));
         footer.setBackground(Color.WHITE);
@@ -133,7 +133,7 @@ public class UserDetailPanel extends JPanel {
         return btn;
     }
 
-    // ------------------------------------------------------------------ Logic
+    // Logic
     private void handleSave() {
         String name  = txtName.getText().trim();
         String email = txtEmail.getText().trim();
